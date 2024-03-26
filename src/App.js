@@ -1,23 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import "./App.css";
+import React, { useEffect } from "react";
 
+import { useForm, useFormContext, FormProvider } from "react-hook-form";
+
+import FormsStepper from "./components/FormsStepper";
 function App() {
+  const methods = useForm(); // Initialize useForm here
+  const { watch, errors } = methods;
+
+  useEffect(() => {
+    console.log("FORM CONTEXT", watch(), errors);
+  }, [watch, errors]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <FormProvider {...methods}>
+        <FormsStepper />
+      </FormProvider>
     </div>
   );
 }
