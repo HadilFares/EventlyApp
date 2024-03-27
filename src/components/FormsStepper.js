@@ -9,28 +9,68 @@ import RegisterPic from "../assets/Register.jpg";
 import { FormOne, FormTwo } from "./Forms";
 import "../css/register.css";
 
+function getSteps() {
+  return ["User Information", "Role Selection"];
+}
+function getStepContent(step, formContent, handleChange) {
+  switch (step) {
+    case 0:
+      return <FormOne {...{ formContent }} />;
+    case 1:
+      return <FormTwo {...{ formContent, handleChange }} />;
+    default:
+      return "Unknown step";
+  }
+}
+
 export default function FormsStepper() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
   const [activeStep, setActiveStep] = React.useState(0);
   const [formContent, setFormContent] = React.useState({});
-
-  const steps = ["User Information", "Role Selection"];
-
-  const handleChange = (event) => {
+  const [compiledForm, setCompiledForm] = React.useState({});
+  const steps = getSteps();
+  const form = watch();
+  /* const handleChange = (event) => {
     const { name, value } = event.target;
     setFormContent({ ...formContent, [name]: value });
   };
-
+*/
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    let canContinue = true;
+
+    switch (activeStep) {
+      case 0:
+        setCompiledForm({ ...compiledForm, userInformation: form });
+        canContinue = true;
+        break;
+      case 1:
+        setCompiledForm({ ...compiledForm, role: form });
+        canContinue = handleSubmit({ ...compiledForm, role: form });
+        break;
+      default:
+        return "not a valid step";
+    }
+    if (canContinue) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    if (activeStep > 0) {
+      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+      switch (activeStep) {
+        case 1:
+          setCompiledForm({ ...compiledForm, role: form });
+          break;
+        default:
+          return "not a valid step";
+      }
+    }
   };
 
   const handleReset = () => {
@@ -38,6 +78,12 @@ export default function FormsStepper() {
     setFormContent({});
   };
 
+  /*const handleSubmit = (form) => {
+    if (_.isEmpty(errors)) {
+      console.log("submit", form);
+    }
+  };
+*/
   const onSubmit = async (data) => {
     try {
       // Your form submission logic here
@@ -69,18 +115,12 @@ export default function FormsStepper() {
                 {activeStep === 0 ? (
                   <FormOne
                     formContent={formContent}
-                    register={register}
-                    handleSubmit={handleSubmit}
-                    onSubmit={handleNext}
-                    errors={errors}
+                    
                   />
                 ) : (
                   <FormTwo
                     formContent={formContent}
-                    register={register}
-                    handleSubmit={handleSubmit(onSubmit)}
-                    handleBack={handleBack}
-                    errors={errors}
+                  
                   />
                 )}
                 <div>

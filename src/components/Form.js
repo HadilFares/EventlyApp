@@ -1,7 +1,9 @@
-/*import React from "react";
+import React from "react";
 import RegisterPic from "../assets/Register.jpg";
 import { useForm } from "react-hook-form";
 import "../css/register.css";
+import { variables } from "../variables";
+import axios from "axios";
 export default function Form() {
   const {
     register,
@@ -9,29 +11,28 @@ export default function Form() {
     watch,
     formState: { errors },
   } = useForm();
+    let history = history();
+  
   const onSubmit = async (data) => {
     try {
-      const response = await fetch(variables.API_URL+signUp, {
+        
+      const response = await fetch(variables.API_URL + "Auth/signUp", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Content-Type":"application/json",
         },
         body: JSON.stringify(data),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to sign up");
-      }
-
+     console.log(data);
       const result = await response.json();
-
-      // Check if the user is authenticated
+      console.log(result);
       if (result.ISAuthenticated) {
+        history.push("/login");
+            window.location.reload();
         console.log("Sign up successful");
-        // You can handle the successful sign up here, such as redirecting the user to another page
       } else {
         console.error("Sign up failed: " + result.Message);
-        // Handle failed sign up, display error message to the user, etc.
       }
     } catch (error) {
       console.error("Error signing up", error.message);
@@ -52,39 +53,74 @@ export default function Form() {
           >
             <input
               type="text"
-              {...register("Username")}
-              placeholder="username"
+              {...register("FirstName", { required: true })}
+              placeholder="FirstName"
             />
-            <input
-              type="text"
-              {...register("Email", { required: true })}
-              placeholder="mobile number"
-            />
-
+            {errors.FirstName?.type === "required" && "FirstName is required"}
             <input
               type="text"
               {...register("LastName", { required: true })}
               placeholder="LastName"
             />
+            {errors.LastName?.type === "required" && "LastName is required"}
+
             <input
               type="text"
-              {...register("FirstName", { required: true })}
-              placeholder="FirstName"
+              {...register("Username", { required: true, maxLength: 20 })}
+              placeholder="username"
             />
+            {errors.Username?.type === "required" && "Username is required"}
+            {errors.Username?.type === "maxLength" && "Max Length Exceed"}
             <input
-              type="text"
-              {...register("Number", { required: true, maxLength: 10 })}
-              placeholder="mobile number"
+              type="email"
+              {...register("Email", { required: true })}
+              placeholder="Email "
             />
+            {errors.Email?.type === "required" && "Email is required"}
+
             <input
-              type="text"
-              {...register("password", { required: true })}
+              type="password"
+              {...register("Password", { required: true })}
               placeholder="password"
             />
-
-            {errors.mobile?.type === "required" && "Mobile Number is required"}
-            {errors.mobile?.type === "maxLength" && "Max Length Exceed"}
-            <button className="btn">Sign In</button>
+            {errors.Password?.type === "required" && "Password is required"}
+            <legend>Please select your preferred contact method:</legend>
+            <div className="flex">
+              <label>
+                <input
+                  type="radio"
+                  value="Organizer"
+                  {...register("Role", { required: true })}
+                />
+                Organizer
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="Participant"
+                  {...register("Role", { required: true })}
+                />
+                Participant
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="Exhibitor"
+                  {...register("Role", { required: true })}
+                />
+                Exhibitor
+              </label>
+              {errors.Role?.type === "required" && "role is required"}
+            </div>
+            <input
+              type="text"
+              {...register("Number", { required: true })}
+              placeholder="mobile number"
+            />
+            {errors.Number?.type === "required" && "Mobile Number is required"}
+            <button className="btn" type="submit">
+              Sign In
+            </button>
           </form>
         </div>
         <div className="col-2">
@@ -94,4 +130,3 @@ export default function Form() {
     </section>
   );
 }
-*/

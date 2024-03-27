@@ -3,48 +3,52 @@ import React, { useEffect } from "react";
 import { useForm, useFormContext } from "react-hook-form";
 import "../css/register.css";
 export const FormOne = ({ formContent, onSubmit }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const { reset } = useFormContext();
+ const methods = useFormContext();
+ const { reset, register } = methods;
 
-  useEffect(() => {
-    reset({ ...formContent }, { errors: true });
-  }, [formContent]);
+
+ useEffect(() => {
+   reset({ ...formContent.one }, { errors: true });
+ }, []);
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <input type="text" {...register("Username")} placeholder="username" />
+    <form className="flex flex-col">
       <input
         type="text"
-        {...register("Email", { required: true })}
+        name="Username"
+        placeholder="Username"
+        ref={register({ required: true })}
+      />
+      <input
+        type="text"
+        name="Email"
+        ref={register({ required: true })}
         placeholder="Email"
       />
       <input
         type="text"
-        {...register("LastName", { required: true })}
+        name="LastName"
+        ref={register({ required: true })}
         placeholder="LastName"
       />
       <input
         type="text"
-        {...register("FirstName", { required: true })}
+        ref={register({ required: true })}
+        name="FirstName"
         placeholder="FirstName"
       />
       <input
         type="text"
-        {...register("Number", { required: true, maxLength: 10 })}
+        name="Number"
+        ref={register({ required: true })}
         placeholder="mobile number"
       />
       <input
         type="text"
-        {...register("password", { required: true })}
+        ref={register({ required: true })}
+        name="Password"
         placeholder="password"
       />
-
-      {errors.mobile?.type === "required" && "Mobile Number is required"}
-      {errors.mobile?.type === "maxLength" && "Max Length Exceed"}
     </form>
   );
 };
