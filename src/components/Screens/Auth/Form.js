@@ -1,9 +1,10 @@
 import React from "react";
-import RegisterPic from "../assets/Register.jpg";
+import RegisterPic from "../../../assets/Register.jpg";
 import { useForm } from "react-hook-form";
-import "../css/register.css";
-import { variables } from "../variables";
+import "../../../css/register.css"
+import { variables } from "../../../variables";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 export default function Form() {
   const {
     register,
@@ -11,25 +12,24 @@ export default function Form() {
     watch,
     formState: { errors },
   } = useForm();
-    let history = history();
-  
+  let history = useNavigate();
+
   const onSubmit = async (data) => {
     try {
-        
       const response = await fetch(variables.API_URL + "Auth/signUp", {
         method: "POST",
         headers: {
-          "Accept": "application/json",
-          "Content-Type":"application/json",
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
-     console.log(data);
+      console.log(data);
       const result = await response.json();
       console.log(result);
       if (result.ISAuthenticated) {
-        history.push("/login");
-            window.location.reload();
+       // history("/login");
+       // window.location.reload();
         console.log("Sign up successful");
       } else {
         console.error("Sign up failed: " + result.Message);
@@ -40,7 +40,7 @@ export default function Form() {
   };
 
   return (
-    <section>
+    <section className="App">
       <div className="register">
         <div className="col-1">
           <h2>Sign In</h2>
