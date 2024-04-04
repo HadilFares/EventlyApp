@@ -1,21 +1,29 @@
-import React from "react";
-import RegisterPic from "../../../assets/Register.jpg"
+import React, { useEffect, useState } from "react";
+import RegisterPic from "../../../assets/Register.jpg";
 import { useForm } from "react-hook-form";
-import { Navigate ,useNavigate} from "react-router-dom";
+import { Navigate, useNavigate, Redirect } from "react-router-dom";
 import { variables } from "../../../variables";
 import "../.././../App.css";
-import "../../../css/register.css"
+import "../../../css/register.css";
+import Notification from "../../Controls/Notification";
+import { AuthProvider, useAuth } from "../../../context/AuthContext";
 export default function Login() {
+  const { signIn } = useAuth();
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
- let navigate = useNavigate();
+  let navigate = useNavigate();
+  const [notify, setNotify] = useState({
+    isOpen: false,
+    message: "",
+    type: "",
+  });
 
   const onSubmit = async (data) => {
-       localStorage.clear();
+    localStorage.clear();
     try {
       const response = await fetch(variables.API_URL + "Auth/login", {
         method: "POST",
@@ -28,33 +36,38 @@ export default function Login() {
       console.log(data);
       const result = await response.json();
       console.log(result);
-      localStorage.setItem("Token", result.Token);
-      localStorage.setItem("Roles", result.Roles);
-      localStorage.setItem("Id", result.Id);
-      localStorage.setItem("UserName", result.UserName);
-      console.log(result.Roles[0])
-      if (result.Roles.includes("Admin")) navigate("/users", { replace: true });
-      else if (result.Roles.Participant) {
-        <Navigate to="/dashboardParticipant" replace={true} />;
-      } else if (result.Roles.Organizer) {
-        <Navigate to="/dashboardOrganizer" replace={true} />;
-      }/* else navigate("/dashboardExhibitor", { replace: true });*/
-     
+      signIn(result);
+      // console.log(result.Roles[0]);
+
       if (result.ISAuthenticated) {
         console.log("Sign up successful");
-      } else {
-        console.error("Sign up failed: " + result.Message);
       }
     } catch (error) {
       console.error("Error signing up", error.message);
+      if (
+        error.response &&
+        error.response.status >= 400 &&
+        error.response.status <= 500
+      ) {
+        setNotify({
+          isOpen: true,
+          message: error.response.data.message,
+          type: "error",
+        });
+      }
     }
   };
-
   return (
     <div className="App">
       <section>
         <div className="register">
           <div className="col-1">
+            <Notification
+              notify={notify}
+              setNotify={setNotify}
+              vertical="top"
+              horizontal="right"
+            />
             <h2>Login</h2>
             <span>Login and enjoy the service</span>
 

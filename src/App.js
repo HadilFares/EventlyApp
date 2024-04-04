@@ -2,7 +2,12 @@
 import "./App.css";
 import React, { useEffect, useState } from "react";
 import { useForm, useFormContext, FormProvider } from "react-hook-form";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  BrowserRouter,
+} from "react-router-dom";
 import { AuthRoutes } from "./Routes/index";
 import AdminHeader from "./components/Header/AdminHeader";
 import AdminRoutes from "./Routes/AdminRoutes";
@@ -12,44 +17,27 @@ import OrganizerRoutes from "./Routes/OrganizerRoutes";
 import PrivateRoutes from "./Routes/PrivateRoutes";
 import Users from "./components/Screens/Admin/Users";
 import AdminDash from "./components/Screens/Admin/AdminDash";
+import CustomDrawer from "./components/Communs/Drawer";
+import NavBar from "./components/Communs/NavBar";
+import { AuthProvider } from "./context/AuthContext";
 function App() {
   const methods = useForm(); // Initialize useForm here
   const { watch, errors } = methods;
 
-  /*useEffect(() => {
-    console.log("FORM CONTEXT", watch(), errors);
-  }, [watch, errors]);
-*/
-  /*<FormProvider {...methods}>
-        <FormsStepper />
-      </FormProvider>*/
-
-  const [userRole, setuserRole] = useState();
-  const [isLoggedIn, setIsLoggedIn] = useState();
-
-  const getUser = () => {
-    let role = localStorage.getItem("Roles");
-    setuserRole(role);
-    setIsLoggedIn(localStorage.getItem("Token"));
-    console.log(isLoggedIn);
-  };
-
-  useEffect(() => {
-    getUser();
-    console.log(userRole);
-  }, []);
-
   return (
     <Router>
-      <Routes>
-        <Route element={<PrivateRoutes role="Admin" />}>
-          <Route exact path="/users" element={<Users />} />
-          <Route exact path="/dashboardAdmin" element={<AdminDash />} />
-        </Route>
-
-        <Route element={<Login />} path="/login" />
-        <Route element={<Form />} path="/Register" />
-      </Routes>
+      <AuthProvider>
+        <CustomDrawer>
+          <Routes>
+            <Route path={"admin"} element={<PrivateRoutes role="Admin" />}>
+              <Route path={"users"} element={<Users />} />
+              <Route path={"dashboard-admin"} element={<AdminDash />} />
+            </Route>
+            <Route element={<Login />} path="/login" />
+            <Route element={<Form />} path="/register" />
+          </Routes>
+        </CustomDrawer>
+      </AuthProvider>
     </Router>
   );
 }

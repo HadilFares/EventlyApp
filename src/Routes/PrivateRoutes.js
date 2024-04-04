@@ -1,23 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
-
+import { useAuth } from "../context/AuthContext";
 const PrivateRoutes = ({ role }) => {
-  const [userRole, setuserRole] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState("");
+  const { user, isLoading } = useAuth();
 
-  const getUser = () => {
-    let role = localStorage.getItem("Roles");
-    setuserRole(role);
-    setIsLoggedIn(localStorage.getItem("Token"));
-    console.log(isLoggedIn);
-  };
+  if (isLoading) return "Loading ... ";
 
-  useEffect(() => {
-    getUser();
-    console.log(userRole);
-  }, []);
-
-  return isLoggedIn && userRole === role ? (
+  return user.Token && user.Roles.includes(role) ? (
     <Outlet />
   ) : (
     <Navigate to="/login" />
@@ -45,3 +34,14 @@ const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => (
 );
 
 export default PrivateRoute;*/
+
+/*    
+  const getUser = () => {
+    let role = localStorage.getItem("Roles");
+    setuserRole(role);
+    setIsLoggedIn(localStorage.getItem("Token"));
+    console.log(isLoggedIn);
+  useEffect(() => {
+    getUser();
+    console.log(userRole);
+  }, []);*/

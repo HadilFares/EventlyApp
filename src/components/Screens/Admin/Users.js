@@ -1,91 +1,317 @@
-import { Form, Button } from "react-bootstrap";
-import React, { useState, useEffect } from "react";
-
-import Pagination from "../../Pagination";
-import User from "./User";
+import React, { useState, useEffect, useMemo } from "react";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import {
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from "@mui/material";
+
+import Popup from "../../Controls/PopUp";
 import { variables } from "../../../variables";
-const Users = () => {
-  const [userList, setuserList] = useState([]);
-  //const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostsPerPage] = useState(2);
-  const [totalUser, setTotalUsers] = useState();
-  const indexOfLastUser = currentPage * postsPerPage;
-  // console.log("indexOfLastPost: ", indexOfLastPost);
+import { Button, makeStyles } from "@material-ui/core";
 
-  const indexOfFirstUser = indexOfLastUser - postsPerPage;
-  // console.log("indexOfFirstPost: ", indexOfFirstPost);
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import CloseIcon from "@mui/icons-material/Close";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import useTable from "../../Communs/useTable";
+import UsersForm from "./../../Communs/UsersForm";
+import ConfirmDialog from "../../Controls/ConfirmDialog";
+import Notification from "../../Controls/Notification";
+import Content from "../../Communs/Content";
+import controls from "../../Controls/controls";
 
-  const currentPosts = userList.slice(indexOfFirstUser, indexOfLastUser);
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+//import ModeEditIcon from "@mui/icons-material/ModeEdit";
+const headCells = [
+  { id: "", label: "" },
+  { id: "FirstName", label: "FirstName" },
+  { id: "LastName", label: "LastName" },
+  { id: "Email", label: "Email" },
+  { id: "UserName", label: "UserName" },
+  { id: "PhoneNumber", label: "PhoneNumber" },
+  { id: "Role", label: "Role" },
+  { id: "actions", label: "Actions", disableSorting: true },
+];
 
- // let token = localStorage.getItem("Token");
-  //console.log(token);
+export default function QuizMasters() {
+  const [isLoggedIn, setIsLoggedIn] = useState();
+  const [Users, setUsers] = useState([]);
+  const [openPopup, setOpenPopup] = useState(false);
+  const [recordForEdit, setRecordForEdit] = useState(null);
+  const [loading, setloading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("");
+  const [notify, setNotify] = useState({
+    isOpen: false,
+    message: "",
+    type: "",
+  });
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: "",
+    subTitle: "",
+  });
+  const [filterFn, setFilterFn] = useState({
+    fn: (items) => {
+      return items;
+    },
+  });
+  const [open, setOpen] = React.useState(false);
+  // const handleOpen = () => setOpen(true);
+  // const handleClose = () => setOpen(false);
+  const { TblContainer, TblHead, TblPagination, recordsAfterPagingAndSorting } =
+    useTable(Users, headCells, filterFn);
+
   const config = {
     headers: {
       "access-control-allow-origin": "*",
       Accept: "application/json",
       "Content-type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("Token")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   };
 
-  const AllUsers = async () => {
-     setLoading(true);
+  const findUsers = async () => {
     try {
-      const result = await axios.get(variables.API_URL + "User/AllUsers", config);
-      console.log(result);
-      setTotalUsers(result.data.length);
-      setuserList(result.data.reverse());
-      setLoading(false);
-    }
-    catch (error){
-          console.error("Error fetching users: ", error);
+      console.log("hello");
+      const result = await axios.get(
+        variables.API_URL + "User/AllUsers",
+        config
+      );
+
+      setUsers(result.data.reverse());
+
+      console.log(Users);
+    } catch (error) {
+      console.log(error);
     }
   };
-/*  'Authorization': 'Bearer ' + token*/
 
+  const deleteUsers = async (id) => {
+    try {
+      await axios.delete(variables.API_URL + "User/${id}");
+      findUsers();
+      setNotify({
+        isOpen: true,
+        message: "Deleted Successfully",
+        type: "success",
+      });
+    } catch (error) {
+      console.log("#error", error);
+      if (
+        error.response &&
+        error.response.status >= 400 &&
+        error.response.status <= 500
+      ) {
+        setNotify({
+          isOpen: true,
+          message: error.response.data.message,
+          type: "error",
+        });
+      }
+    }
+  };
+
+  const addOrEdit = async (userInfo, resetForm) => {
+    console.log("#userinfo", userInfo);
+    if (userInfo.id == 0) {
+      try {
+        const { data } = await axios.post(
+          variables.API_URL + "User/CreateUser",
+          {
+            FirstName: userInfo.FirstName,
+            LastName: userInfo.LastName,
+            Email: userInfo.Email,
+            Password: userInfo.Password,
+            PhoneNumber: userInfo.PhoneNumber,
+            Role: selectedRole,
+          },
+          config
+        );
+        if (data) {
+          setNotify({
+            isOpen: true,
+            message: "Submitted Successfully",
+            type: "success",
+          });
+        }
+      } catch (error) {
+        //  setloading(false);
+        console.log(error.response.data.message);
+        if (
+          error.response &&
+          error.response.status >= 400 &&
+          error.response.status <= 500
+        ) {
+          setNotify({
+            isOpen: true,
+            message: error.response.data.message,
+            type: "error",
+          });
+        }
+      }
+    } else if (recordForEdit) {
+      console.log("#recordFordit", recordForEdit);
+      await axios
+        .put(
+          variables.API_URL + "User/${recordForEdit._id}",
+          {
+            FirstName: userInfo.FirstName,
+            LastName: userInfo.LastName,
+            Email: userInfo.Email,
+            Password: userInfo.Password,
+            PhoneNumber: userInfo.PhoneNumber,
+            Role: selectedRole.Role,
+          },
+          config
+        )
+        .then((res) => console.log(res));
+      console.log("#kdcfvj", recordForEdit._id);
+    }
+
+    resetForm();
+    setRecordForEdit(null);
+    setOpenPopup(false);
+    findUsers();
+  };
+  const openInPopup = (item) => {
+    console.log("#item", item);
+    setRecordForEdit({ ...item });
+
+    setOpenPopup(true);
+  };
+  console.log("#record", recordForEdit);
+  function Row(props) {
+    const { row } = props;
+    const [open, setOpen] = React.useState(false);
+
+    return (
+      <React.Fragment>
+        <TableRow>
+          <TableCell
+            style={{
+              borderBottom: "3px solid #878787",
+              borderBottomLeftRadius: "20%",
+            }}
+          >
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+
+          <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
+            {row.UserName}
+          </TableCell>
+          <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
+            {row.FirstName}
+          </TableCell>
+          <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
+            {row.LastName}
+          </TableCell>
+          <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
+            {row.Email}
+          </TableCell>
+          <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
+            {row.PhoneNumber}
+          </TableCell>
+          <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
+            {row.Role}
+          </TableCell>
+          <TableCell
+            style={{ borderBottom: "3px solid #878787", borderRadius: "8px" }}
+          >
+            <Button
+              color="primary"
+              onClick={() => {
+                openInPopup(row);
+              }}
+
+              // onClick={handleOpen}
+            >
+              <EditIcon fontSize="small" />
+            </Button>
+
+            <Button color="secondary">
+              <CloseIcon
+                fontSize="small"
+                onClick={() => {
+                  setConfirmDialog({
+                    isOpen: true,
+                    title: "Are you sure to delete this record?",
+                    subTitle: "You can't undo this operation",
+                    onConfirm: () => {
+                      deleteUsers(row.id);
+                      setConfirmDialog({
+                        isOpen: false,
+                      });
+                    },
+                  });
+                }}
+              />
+            </Button>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
+    );
+  }
   useEffect(
     () => {
-      AllUsers();
+      findUsers();
     },
     [],
-    [userList]
+    [Users]
   );
-
-
- 
-
   return (
-    <>
-      <div className="row my-5">
-        <div className="col">
-          <h4 className="border-bottom">Filters</h4>
-        </div>
-     
-      </div>
-      <div className="container">
-        <div className="py-4">
-          <h1>Home Page</h1>
+    <div className="outletForm">
+      <Content>
+        <TblContainer>
+          <Table aria-label="collapsible table">
+            <TblHead />
+            <TableBody>
+              {recordsAfterPagingAndSorting().map((row) => (
+                <Row key={row.id} row={row} />
+              ))}
+            </TableBody>
+          </Table>
+          <Popup
+            title=" Users Form"
+            openPopup={openPopup}
+            setOpenPopup={setOpenPopup}
+          >
+            <UsersForm recordForEdit={recordForEdit} addOrEdit={addOrEdit} />
+          </Popup>
 
-          <User users={currentPosts} loading={loading} />
+          <Notification
+            notify={notify}
+            setNotify={setNotify}
+            vertical="top"
+            horizontal="right"
+          />
+          <ConfirmDialog
+            confirmDialog={confirmDialog}
+            setConfirmDialog={setConfirmDialog}
+          />
+        </TblContainer>
+        <TblPagination />
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <controls.Button
+            text="Add New"
+            color="#1D1D1D"
+            startIcon={<AddIcon />}
+            onClick={() => {
+              setOpenPopup(true);
+              setRecordForEdit(null);
+            }}
+          />
         </div>
-      </div>
-      <div style={{ marginLeft: "700px" }}>
-        <Pagination
-          paginate={paginate}
-          postsPerPage={postsPerPage}
-          totalPosts={userList.length}
-        />
-      </div>
-     
-    </>
+      </Content>
+    </div>
   );
-};
-
-export default Users;
+}

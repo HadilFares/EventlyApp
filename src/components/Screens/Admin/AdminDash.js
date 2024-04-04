@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Form } from "react-bootstrap";
-import Loader  from "../../Loader"
+import Loader from "../../Communs/Loader";
 import { variables } from "../../../variables";
 const AdminDash = () => {
   const [users, setUsers] = useState();
