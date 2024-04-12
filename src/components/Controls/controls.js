@@ -7,6 +7,7 @@ import Errormessage from "./ErrorMessage";
 import Popup from "./PopUp";
 import ConfirmDialog from "./ConfirmDialog";
 import Notification from "./Notification";
+import Select from "./Select";
 const controls = {
   Input,
   Button,
@@ -16,6 +17,7 @@ const controls = {
   Popup,
   ConfirmDialog,
   Notification,
+  Select,
 };
 
 export default controls;

@@ -8,11 +8,15 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
+import InputLabel from "@mui/material/InputLabel";
+import Box from "@mui/material/Box";
+import NativeSelect from "@mui/material/NativeSelect";
 
 export default function UsersForm(props) {
+  const [selectedRole, setSelectedRole] = useState({});
   const initialFValues = {
-    id: 0,
-    UserName: "",
+    Id: 0,
+    Username: "",
     FirstName: "",
     LastName: "",
     Email: "",
@@ -21,10 +25,10 @@ export default function UsersForm(props) {
     Role: "",
   };
 
-  /*  const handleRoleChange = (event) => {
+  const handleRoleChange = (event) => {
     setSelectedRole(event.target.value);
+    console.log("selectedRole", selectedRole);
   };
- */
 
   const { addOrEdit, recordForEdit } = props;
   const validate = (fieldValues = values) => {
@@ -40,11 +44,17 @@ export default function UsersForm(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const selectedrole = values.Role;
+    console.log("selectedRole", selectedrole);
     if (validate()) {
-      addOrEdit({ ...values }, resetForm);
+      addOrEdit({ ...values, selectedRole }, resetForm);
     }
   };
 
+  const roles = [
+    { label: "Organizer", value: "Organizer" },
+    { label: "Participant", value: "Participant" },
+  ];
   useEffect(() => {
     if (recordForEdit != null)
       setValues({
@@ -56,6 +66,14 @@ export default function UsersForm(props) {
     <Form onSubmit={handleSubmit}>
       <Grid container>
         <Grid item xs={6}>
+          <controls.Input
+            label="Username"
+            name="Username"
+            value={values.Username}
+            onChange={handleInputChange}
+            error={errors.Username}
+            required
+          ></controls.Input>
           <controls.Input
             label="First name"
             name="FirstName"
@@ -80,14 +98,7 @@ export default function UsersForm(props) {
             error={errors.Email}
             required
           ></controls.Input>
-          <controls.Input
-            label="UserName"
-            name="UserName"
-            value={values.UserName}
-            onChange={handleInputChange}
-            error={errors.UserName}
-            required
-          ></controls.Input>
+
           <controls.Input
             label="PhoneNumber"
             name="PhoneNumber"
@@ -96,7 +107,15 @@ export default function UsersForm(props) {
             error={errors.PhoneNumber}
             required
           ></controls.Input>
-          <FormControl>
+          <controls.Input
+            label="Password"
+            name="Password"
+            value={values.Password}
+            onChange={handleInputChange}
+            error={errors.Password}
+            required
+          ></controls.Input>
+          {/*<FormControl>
             <FormLabel id="demo-radio-buttons-group-label">Role</FormLabel>
             <RadioGroup
               aria-label="role"
@@ -118,7 +137,19 @@ export default function UsersForm(props) {
                 label="Participant"
               />
             </RadioGroup>
-          </FormControl>
+            
+  </FormControl>*/}
+          <Box sx={{ minWidth: 120 }}>
+            <controls.Select
+              label="Role"
+              name="Role"
+              value={values.Role}
+              onChange={handleInputChange}
+              options={roles}
+              error={errors.Role}
+              required
+            ></controls.Select>
+          </Box>
         </Grid>
 
         <Grid item xs={6}>

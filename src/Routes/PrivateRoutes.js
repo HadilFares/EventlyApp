@@ -4,9 +4,10 @@ import { useAuth } from "../context/AuthContext";
 const PrivateRoutes = ({ role }) => {
   const { user, isLoading } = useAuth();
 
+  console.log("user", user);
   if (isLoading) return "Loading ... ";
 
-  return user.Token && user.Roles.includes(role) ? (
+  return user?.ISAuthenticated && user.Roles.includes(role) ? (
     <Outlet />
   ) : (
     <Navigate to="/login" />

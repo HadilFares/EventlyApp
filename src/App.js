@@ -20,6 +20,7 @@ import AdminDash from "./components/Screens/Admin/AdminDash";
 import CustomDrawer from "./components/Communs/Drawer";
 import NavBar from "./components/Communs/NavBar";
 import { AuthProvider } from "./context/AuthContext";
+import PendingAccounts from "./components/Screens/Admin/PendingAccounts";
 function App() {
   const methods = useForm(); // Initialize useForm here
   const { watch, errors } = methods;
@@ -32,6 +33,7 @@ function App() {
             <Route path={"admin"} element={<PrivateRoutes role="Admin" />}>
               <Route path={"users"} element={<Users />} />
               <Route path={"dashboard-admin"} element={<AdminDash />} />
+              <Route path={"pending-Account"} element={<PendingAccounts />} />
             </Route>
             <Route element={<Login />} path="/login" />
             <Route element={<Form />} path="/register" />

@@ -25,6 +25,7 @@ import Notification from "../../Controls/Notification";
 import Content from "../../Communs/Content";
 import controls from "../../Controls/controls";
 import { useAuth } from "../../../context/AuthContext";
+import CheckIcon from "@mui/icons-material/Check";
 //import ModeEditIcon from "@mui/icons-material/ModeEdit";
 const headCells = [
   { id: "", label: "" },
@@ -34,16 +35,15 @@ const headCells = [
   { id: "Email", label: "Email" },
   { id: "PhoneNumber", label: "PhoneNumber" },
   { id: "Role", label: "Role" },
-  { id: "actions", label: "Actions", disableSorting: true },
+  { id: "Status", label: "Status", disableSorting: true },
 ];
 
-export default function QuizMasters() {
+export default function PendingAccounts() {
   //const [isLoggedIn, setIsLoggedIn] = useState();
-  const [Users, setUsers] = useState([]);
+  const [Accounts, setAccounts] = useState([]);
   const [openPopup, setOpenPopup] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
   const { user, isLoading } = useAuth();
-  const [selectedRole, setSelectedRole] = useState("");
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
@@ -63,7 +63,7 @@ export default function QuizMasters() {
   // const handleOpen = () => setOpen(true);
   // const handleClose = () => setOpen(false);
   const { TblContainer, TblHead, TblPagination, recordsAfterPagingAndSorting } =
-    useTable(Users, headCells, filterFn);
+    useTable(Accounts, headCells, filterFn);
 
   const config = {
     headers: {
@@ -74,33 +74,36 @@ export default function QuizMasters() {
     },
   };
 
-  const findUsers = async () => {
+  const findPendingAccounts = async () => {
     console.log("test");
     try {
       console.log("hello");
       const result = await axios.get(
-        variables.API_URL + "User/AllUsers",
+        variables.API_URL + "Account/GetPendingAccounts",
         config
       );
       console.log("result2", result.data.reverse());
-      setUsers(result.data.reverse());
+      setAccounts(result.data.reverse());
 
-      console.log("Users", Users);
+      console.log("Accounts", Accounts);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const deleteUsers = async (id) => {
+  const UpdateAccountStatus = async (id, status) => {
+    console.log("#status", status);
+    console.log("#idaccount", id);
     try {
-      console.log("#Id", id);
-      await axios.delete(variables.API_URL + `User/${id}`, config);
-      findUsers();
-      setNotify({
-        isOpen: true,
-        message: "Deleted Successfully",
-        type: "success",
-      });
+      await axios.put(
+        variables.API_URL + `Account/${id}/status/${status}`,
+        {
+          accountId: id,
+          status: status,
+        },
+        config
+      );
+      findPendingAccounts();
     } catch (error) {
       console.log("#error", error);
       if (
@@ -117,79 +120,6 @@ export default function QuizMasters() {
     }
   };
 
-  const addOrEdit = async (userInfo, resetForm) => {
-    console.log("#userinfo", userInfo);
-    if (userInfo.Id == 0) {
-      try {
-        const { data } = await axios.post(
-          variables.API_URL + "User/CreateUser",
-          {
-            FirstName: userInfo.FirstName,
-            LastName: userInfo.LastName,
-            Username: userInfo.Username,
-            Email: userInfo.Email,
-            Password: userInfo.Password,
-            PhoneNumber: userInfo.PhoneNumber,
-            Role: userInfo.Role,
-          },
-          config
-        );
-        console.log("UserInfoCreate", userInfo);
-        if (data) {
-          setNotify({
-            isOpen: true,
-            message: "Submitted Successfully",
-            type: "success",
-          });
-        }
-      } catch (error) {
-        //  setloading(false);
-        console.log(error.response.data.message);
-        if (
-          error.response &&
-          error.response.status >= 400 &&
-          error.response.status <= 500
-        ) {
-          setNotify({
-            isOpen: true,
-            message: error.response.data.message,
-            type: "error",
-          });
-        }
-      }
-    } else if (recordForEdit) {
-      console.log("#recordFordit", recordForEdit);
-      console.log("#kdcfvj", recordForEdit.Id);
-      await axios
-        .put(
-          variables.API_URL + `User/${recordForEdit.Id}`,
-          {
-            Id: recordForEdit.Id,
-            FirstName: userInfo.FirstName,
-            LastName: userInfo.LastName,
-            Username: userInfo.Username,
-            Email: userInfo.Email,
-            Password: userInfo.Password,
-            PhoneNumber: userInfo.PhoneNumber,
-            Role: userInfo.Role,
-          },
-          config
-        )
-        .then((res) => console.log(res));
-      console.log("#kdcfvj", recordForEdit.Id);
-    }
-
-    resetForm();
-    setRecordForEdit(null);
-    setOpenPopup(false);
-    findUsers();
-  };
-  const openInPopup = (item) => {
-    console.log("#item", item);
-    setRecordForEdit({ ...item });
-
-    setOpenPopup(true);
-  };
   console.log("#record", recordForEdit);
   function Row(props) {
     const { row } = props;
@@ -215,35 +145,37 @@ export default function QuizMasters() {
           </TableCell>
 
           <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
-            {row.Username}
+            {row.Item1.User.Username}
           </TableCell>
           <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
-            {row.FirstName}
+            {row.Item1.User.FirstName}
           </TableCell>
           <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
-            {row.LastName}
+            {row.Item1.User.LastName}
           </TableCell>
           <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
-            {row.Email}
+            {row.Item1.User.Email}
           </TableCell>
           <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
-            {row.PhoneNumber}
+            {row.Item1.User.PhoneNumber}
           </TableCell>
           <TableCell align="left" style={{ borderBottom: "3px solid #878787" }}>
-            {row.Role}
+            {row.Item2}
           </TableCell>
+
           <TableCell
             style={{ borderBottom: "3px solid #878787", borderRadius: "8px" }}
           >
             <Button
               color="primary"
               onClick={() => {
-                openInPopup(row);
+                // openInPopup(row);//update
+                UpdateAccountStatus(row.Item1.Id, 0);
               }}
 
               // onClick={handleOpen}
             >
-              <EditIcon fontSize="small" />
+              <CheckIcon fontSize="small" />
             </Button>
 
             <Button color="secondary">
@@ -252,10 +184,10 @@ export default function QuizMasters() {
                 onClick={() => {
                   setConfirmDialog({
                     isOpen: true,
-                    title: "Are you sure to delete this record?",
+                    title: "Are you sure to canceled this account?",
                     subTitle: "You can't undo this operation",
                     onConfirm: () => {
-                      deleteUsers(row.Id);
+                      UpdateAccountStatus(row.Item1.Id, "Canceled");
                       setConfirmDialog({
                         isOpen: false,
                       });
@@ -271,10 +203,10 @@ export default function QuizMasters() {
   }
   useEffect(
     () => {
-      findUsers();
+      findPendingAccounts();
     },
     [],
-    [Users]
+    [Accounts]
   );
   return (
     <div className="outletForm">
@@ -288,13 +220,6 @@ export default function QuizMasters() {
               ))}
             </TableBody>
           </Table>
-          <Popup
-            title=" Users Form"
-            openPopup={openPopup}
-            setOpenPopup={setOpenPopup}
-          >
-            <UsersForm recordForEdit={recordForEdit} addOrEdit={addOrEdit} />
-          </Popup>
 
           <Notification
             notify={notify}
@@ -308,17 +233,6 @@ export default function QuizMasters() {
           />
         </TblContainer>
         <TblPagination />
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <controls.Button
-            text="Add New"
-            color="#1D1D1D"
-            startIcon={<AddIcon />}
-            onClick={() => {
-              setOpenPopup(true);
-              setRecordForEdit(null);
-            }}
-          />
-        </div>
       </Content>
     </div>
   );

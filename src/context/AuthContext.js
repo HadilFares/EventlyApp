@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import axios from "axios";
+import { variables } from "../variables";
 export const AuthContext = React.createContext(null);
 
 export const AuthProvider = (props) => {
@@ -29,13 +30,45 @@ export const AuthProvider = (props) => {
       //<Navigate to="/dashboardOrganizer" replace={true} />;
     } /* else navigate("/dashboardExhibitor", { replace: true });*/
   };
+
+  const config = {
+    headers: {
+      "access-control-allow-origin": "*",
+      Accept: "application/json",
+      "Content-type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  };
+
+  const DecodeToken = async () => {
+    const token = localStorage.getItem("token");
+    console.log("Token:", token);
+    try {
+      const response = await axios.get(
+        // `variables.API_URL/Auth/decode?token=${token}`,
+        variables.API_URL + `Auth/decode?token=${token}`,
+        config
+      );
+      console.log(response.data);
+      const result = response.data;
+      console.log("result", result);
+
+      if (result.ISAuthenticated) {
+        setUser(result);
+        console.log(user);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error decoding token:", error);
+    }
+  };
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
       return;
     }
-
+    DecodeToken();
     //appel api decode
     //setUser()
     //setisloading(false)
@@ -50,6 +83,7 @@ export const AuthProvider = (props) => {
     isLoading,
     signIn,
     signOut,
+    DecodeToken,
     open,
     setOpen,
     user,
