@@ -8,9 +8,9 @@ import { variables } from "../../../variables";
 import dayjs from "dayjs";
 export default function EventsForm(props) {
   const [selectedRole, setSelectedRole] = useState({});
-  const [StartDate, setStartDate] = useState(new Date());
-  const [EndDate, setEndDate] = useState(new Date());
 
+  const [EndDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState("");
   const initialFValues = {
     Id: 0,
     Name: "",
@@ -79,12 +79,19 @@ export default function EventsForm(props) {
     { label: "Salons", value: "Salons" },
     { label: "Expositions", value: "Expositions" },
   ];
-  useEffect(() => {
-    if (recordForEdit != null)
-      setValues({
-        ...recordForEdit,
-      });
-  }, [recordForEdit]);
+  useEffect(
+    () => {
+      if (recordForEdit != null)
+        setValues({
+          ...recordForEdit,
+        });
+      const today = new Date();
+      const formattedDate = today.toISOString().split("T")[0];
+      setStartDate(formattedDate);
+    },
+    [recordForEdit],
+    []
+  );
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -142,6 +149,7 @@ export default function EventsForm(props) {
           <controls.Input
             label="NbStand"
             name="NbStand"
+            type="number"
             value={values.NbStand}
             onChange={handleInputChange}
             error={errors.NbStand}
@@ -157,22 +165,25 @@ export default function EventsForm(props) {
           ></controls.Input>
         </Grid>
         <Grid item xs={6}>
-          <controls.Date
+          <controls.Input
             label="StartDate"
             name="StartDate"
-            value={values.StartDate}
+            value={values.StartDate || startDate}
+            type="date"
             onChange={handleInputChange}
             error={errors.StartDate}
             required
-          ></controls.Date>
-          <controls.Date
+            inputProps={{ placeholder: "YYYY-MM-DD" }}
+          ></controls.Input>
+          <controls.Input
             label="EndDate"
             name="EndDate"
-            value={values.EndDate}
+            type="date"
+            value={values.EndDate || startDate}
             onChange={handleInputChange}
             error={errors.EndDate}
             required
-          ></controls.Date>
+          ></controls.Input>
 
           <controls.Time
             label="StartTime"

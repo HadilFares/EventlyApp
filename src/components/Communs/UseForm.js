@@ -45,7 +45,7 @@ export function useForm(initialFValues, validateOnChange = false, validate) {
     if (validateOnChange) validate({ [name]: updatedValue });
   };*/
 
-  const handleInputChange = (e) => {
+  /*  const handleInputChange = (e) => {
     const { name, value } = e.target;
     const newValue = value || "";
     setValues({
@@ -54,6 +54,46 @@ export function useForm(initialFValues, validateOnChange = false, validate) {
     });
     if (validateOnChange) validate({ [name]: newValue });
   };
+ 
+*/
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    // Check if the input field name is "Price"
+    if (name === "Price") {
+      // Regular expression to match numbers or doubles
+      const numberRegex = /^[0-9]*\.?[0-9]*$/;
+      // Check if the input value matches the regex
+      if (numberRegex.test(value) || value === "") {
+        // If it matches, update the state with the new value
+        const newValue = value || "";
+        setValues({
+          ...values,
+          [name]: newValue,
+        });
+        if (validateOnChange) validate({ [name]: newValue });
+      }
+    } else if (name === "NbStand") {
+      // Check if the input value is not negative
+      if (parseFloat(value) >= 0 || value === "") {
+        // If it's not negative, update the state with the new value
+        const newValue = value || "";
+        setValues({
+          ...values,
+          [name]: newValue,
+        });
+        if (validateOnChange) validate({ [name]: newValue });
+      }
+    } else {
+      // For other input fields, update the state directly without validation
+      const newValue = value || "";
+      setValues({
+        ...values,
+        [name]: newValue,
+      });
+    }
+  };
+
   const resetForm = () => {
     setValues(initialFValues);
     setErrors({});
