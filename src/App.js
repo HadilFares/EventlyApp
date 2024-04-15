@@ -1,5 +1,6 @@
 // App.js
 import "./App.css";
+import "./index.css";
 import React, { useEffect, useState } from "react";
 import { useForm, useFormContext, FormProvider } from "react-hook-form";
 import {
@@ -21,6 +22,7 @@ import CustomDrawer from "./components/Communs/Drawer";
 import NavBar from "./components/Communs/NavBar";
 import { AuthProvider } from "./context/AuthContext";
 import PendingAccounts from "./components/Screens/Admin/PendingAccounts";
+import Events from "./components/Screens/Organizer/Events";
 function App() {
   const methods = useForm(); // Initialize useForm here
   const { watch, errors } = methods;
@@ -34,6 +36,12 @@ function App() {
               <Route path={"users"} element={<Users />} />
               <Route path={"dashboard-admin"} element={<AdminDash />} />
               <Route path={"pending-Account"} element={<PendingAccounts />} />
+            </Route>
+            <Route
+              path={"organizer"}
+              element={<PrivateRoutes role="Organizer" />}
+            >
+              <Route path={"events"} element={<Events />} />
             </Route>
             <Route element={<Login />} path="/login" />
             <Route element={<Form />} path="/register" />

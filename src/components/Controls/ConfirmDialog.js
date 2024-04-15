@@ -6,10 +6,12 @@ import {
   DialogActions,
   Typography,
   makeStyles,
+  useTheme,
   IconButton,
 } from "@material-ui/core";
 
 import Button from "./Button";
+
 const useStyles = makeStyles((theme) => ({
   dialog: {
     padding: theme.spacing(2),
@@ -40,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ConfirmDialog(props) {
   const { confirmDialog, setConfirmDialog } = props;
+  const theme = useTheme();
   const classes = useStyles();
 
   return (

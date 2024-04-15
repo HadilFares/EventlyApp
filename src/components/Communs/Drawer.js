@@ -39,10 +39,11 @@ function Copyright(props) {
     </Typography>
   );
 }
+const defaultTheme = createTheme();
 export default function CustomDrawer({ children }) {
   const { signOut, user } = useAuth();
   // let navigate = useNavigate();
-  const defaultTheme = createTheme();
+
   const [open, setOpen] = React.useState(true);
 
   const adminIcons = [

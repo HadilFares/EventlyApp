@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, useTheme } from "@material-ui/core";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 
@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Notification(props) {
   const { notify, setNotify, vertical, horizontal } = props;
+  const theme = useTheme();
   const classes = useStyles();
 
   const handleClose = (event, reason) => {

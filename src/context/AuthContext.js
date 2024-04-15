@@ -24,10 +24,8 @@ export const AuthProvider = (props) => {
     if (userInfo.Roles.includes("Admin")) {
       console.log("test");
       return navigate("/admin/users");
-    } else if (userInfo.Roles.Participant) {
-      // <Navigate to="/dashboardParticipant" replace={true} />;
-    } else if (userInfo.Roles.Organizer) {
-      //<Navigate to="/dashboardOrganizer" replace={true} />;
+    } else if (userInfo.Roles.includes("Organizer")) {
+      return navigate("organizer/events");
     } /* else navigate("/dashboardExhibitor", { replace: true });*/
   };
 

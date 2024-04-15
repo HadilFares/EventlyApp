@@ -43,6 +43,7 @@ export default function QuizMasters() {
   const [openPopup, setOpenPopup] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
   const { user, isLoading } = useAuth();
+
   const [selectedRole, setSelectedRole] = useState("");
   const [notify, setNotify] = useState({
     isOpen: false,

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, makeStyles } from "@material-ui/core";
+import { Button, makeStyles, useTheme } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ActionButton(props) {
   const { color, children, onClick } = props;
+  const theme = useTheme();
   const classes = useStyles();
 
   return (

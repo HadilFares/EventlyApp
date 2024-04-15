@@ -6,6 +6,7 @@ import {
   makeStyles,
   Typography,
   Box,
+  useTheme,
 } from "@material-ui/core";
 import CloseIcon from "@mui/icons-material/Close";
 import controls from "./controls";
@@ -30,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Popup(props) {
   const { title, children, openPopup, setOpenPopup } = props;
+  const theme = useTheme();
   const classes = useStyles();
 
   return (
