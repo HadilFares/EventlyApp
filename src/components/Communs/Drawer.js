@@ -57,13 +57,14 @@ export default function CustomDrawer({ children }) {
   const pagePaths = {
     Users: "admin/users",
     PendingAccounts: "admin/pending-Account",
+    PendingEvents: "admin/pending-Events",
     Events: "admin/events",
     AllEvents: "organizer/events",
     Categories: "organizer/categories",
   };
 
   const items = user?.Roles.includes("Admin")
-    ? ["Users", "PendingAccounts", "Events"]
+    ? ["Users", "PendingAccounts", "Events", "PendingEvents"]
     : ["AllEvents", "Categories"];
 
   const DrawerList = (

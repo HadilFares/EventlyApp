@@ -23,6 +23,7 @@ import NavBar from "./components/Communs/NavBar";
 import { AuthProvider } from "./context/AuthContext";
 import PendingAccounts from "./components/Screens/Admin/PendingAccounts";
 import Events from "./components/Screens/Organizer/Events";
+import PendingEvents from "./components/Screens/Admin/PendingEvents";
 function App() {
   const methods = useForm(); // Initialize useForm here
   const { watch, errors } = methods;
@@ -36,6 +37,7 @@ function App() {
               <Route path={"users"} element={<Users />} />
               <Route path={"dashboard-admin"} element={<AdminDash />} />
               <Route path={"pending-Account"} element={<PendingAccounts />} />
+              <Route path={"pending-Events"} element={<PendingEvents />} />
             </Route>
             <Route
               path={"organizer"}

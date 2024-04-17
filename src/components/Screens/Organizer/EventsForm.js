@@ -6,11 +6,9 @@ import Box from "@mui/material/Box";
 import axios from "axios";
 import { variables } from "../../../variables";
 import dayjs from "dayjs";
+import "react-time-picker/dist/TimePicker.css";
 export default function EventsForm(props) {
-  const [selectedRole, setSelectedRole] = useState({});
-
-  const [EndDate, setEndDate] = useState(new Date());
-  const [startDate, setStartDate] = useState("");
+  const [DefaultDate, setDefaultDate] = useState("");
   const initialFValues = {
     Id: 0,
     Name: "",
@@ -24,11 +22,6 @@ export default function EventsForm(props) {
     Price: "",
     NbStand: "",
     CategoryName: "",
-  };
-
-  const handleRoleChange = (event) => {
-    setSelectedRole(event.target.value);
-    console.log("selectedRole", selectedRole);
   };
 
   const { addOrEdit, recordForEdit, Categories } = props;
@@ -45,29 +38,10 @@ export default function EventsForm(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const selectedrole = values.Role;
-    // const StartDate = new Date(values.StartDate);
-    //const EndDate = new Date(values.EndDate);
-    //  setStartDate(values.StartDate);
-    // setEndDate(values.EndDate);
-    // console.log("selectedRole", selectedrole);
-    /* if (validate()) {
-      addOrEdit({ ...values, selectedRole, StartDate, EndDate }, resetForm);
-    }*/
-    // const startTime = dayjs(values.StartTime);
-    //const endTime = dayjs(values.EndTime);
     console.log("#Values", values);
     if (validate()) {
       addOrEdit({ ...values }, resetForm);
     }
-  };
-  const config = {
-    headers: {
-      "access-control-allow-origin": "*",
-      Accept: "application/json",
-      "Content-type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
   };
   const categoryOptions = Categories.map((category) => ({
     label: category.Name,
@@ -81,13 +55,13 @@ export default function EventsForm(props) {
   ];
   useEffect(
     () => {
-      if (recordForEdit != null)
-        setValues({
-          ...recordForEdit,
-        });
+      if (recordForEdit != null) console.log("effectrecord", recordForEdit);
+      setValues({
+        ...recordForEdit,
+      });
       const today = new Date();
       const formattedDate = today.toISOString().split("T")[0];
-      setStartDate(formattedDate);
+      setDefaultDate(formattedDate);
     },
     [recordForEdit],
     []
@@ -168,39 +142,40 @@ export default function EventsForm(props) {
           <controls.Input
             label="StartDate"
             name="StartDate"
-            value={values.StartDate || startDate}
             type="date"
+            value={values.StartDate}
             onChange={handleInputChange}
             error={errors.StartDate}
             required
-            inputProps={{ placeholder: "YYYY-MM-DD" }}
           ></controls.Input>
           <controls.Input
             label="EndDate"
             name="EndDate"
             type="date"
-            value={values.EndDate || startDate}
+            value={values.EndDate}
             onChange={handleInputChange}
             error={errors.EndDate}
             required
           ></controls.Input>
 
-          <controls.Time
+          <controls.Input
             label="StartTime"
+            type="time"
             name="StartTime"
             value={values.StartTime}
             onChange={handleInputChange}
             error={errors.StartTime}
             required
-          ></controls.Time>
-          <controls.Time
+          ></controls.Input>
+          <controls.Input
             label="EndTime"
             name="EndTime"
+            type="time"
             value={values.EndTime}
             onChange={handleInputChange}
             error={errors.EndTime}
             required
-          ></controls.Time>
+          ></controls.Input>
           <div>
             <controls.Button type="submit" text="Submit" />
             <controls.Button text="Reset" color="error" onClick={resetForm} />

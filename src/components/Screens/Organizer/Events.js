@@ -148,6 +148,7 @@ export default function Events() {
         };
       });
       setAllEvents(formattedEvents);
+      console.log("#formatedevents", formattedEvents);
     } catch (error) {
       console.log(error);
     }
@@ -194,6 +195,13 @@ export default function Events() {
       }
     }
   };
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Get month (adding 1 since it's zero-based) and pad with leading zero if needed
+    const day = date.getDate().toString().padStart(2, "0"); // Get day and pad with leading zero if needed
+    const year = date.getFullYear(); // Get year
+    return `${month}/${day}/${year}`;
+  }
 
   const addOrEdit = async (EventInfo, resetForm) => {
     console.log("#Eventinfo", EventInfo);
@@ -204,7 +212,7 @@ export default function Events() {
           {
             Name: EventInfo.Name,
             Description: EventInfo.Description,
-            StartDate: EventInfo.startDate,
+            StartDate: EventInfo.StartDate,
             EndDate: EventInfo.EndDate,
             StartTime: EventInfo.StartTime,
             EndTime: EventInfo.EndTime,
@@ -243,14 +251,15 @@ export default function Events() {
     } else if (recordForEdit) {
       console.log("#recordFordit", recordForEdit);
       console.log("#kdcfvj", recordForEdit.Id);
+
       await axios
         .put(
           variables.API_URL + `Event/${recordForEdit.Id}`,
           {
             Name: EventInfo.Name,
             Description: EventInfo.Description,
-            StartDate: EventInfo.startDate,
-            EndDate: EventInfo.EndDate,
+            StartDate: formatDate(EventInfo.StartDate),
+            EndDate: formatDate(EventInfo.EndDate),
             StartTime: EventInfo.StartTime,
             EndTime: EventInfo.EndTime,
             Type: EventInfo.Type,
