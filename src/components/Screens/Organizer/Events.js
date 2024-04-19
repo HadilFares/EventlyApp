@@ -376,15 +376,11 @@ export default function Events() {
       </React.Fragment>
     );
   }
-  useEffect(
-    () => {
-      findAllEvents();
-      findCategories();
-    },
-    [],
-    [AllEvents],
-    [Categories]
-  );
+  useEffect(() => {
+    findAllEvents();
+    findCategories();
+  }, []);
+
   return (
     <>
       {isLoading ? (
@@ -431,7 +427,7 @@ export default function Events() {
               <controls.Button
                 text="Add New"
                 color="#1D1D1D"
-                startIcon={<AddIcon />}
+                starticon={<AddIcon />}
                 onClick={() => {
                   setOpenPopup(true);
                   setRecordForEdit(null);

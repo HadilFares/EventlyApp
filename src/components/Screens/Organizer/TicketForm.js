@@ -7,26 +7,18 @@ import axios from "axios";
 import { variables } from "../../../variables";
 import dayjs from "dayjs";
 import "react-time-picker/dist/TimePicker.css";
-export default function EventsForm(props) {
+export default function TicketForm(props) {
   const [DefaultDate, setDefaultDate] = useState("");
-  const Types = [
-    { label: "Foire", value: "Foire" },
-    { label: "Salons", value: "Salons" },
-    { label: "Expositions", value: "Expositions" },
-  ];
   const initialFValues = {
     Id: 0,
     Name: "",
-    Description: "",
     StartDate: "",
     EndDate: "",
     StartTime: "",
     EndTime: "",
-    Type: "",
     Location: "",
     Price: "",
-    NbStand: "",
-    CategoryName: "",
+    TicketColor: "",
   };
   const { addOrEdit, recordForEdit, Categories } = props;
 
@@ -49,19 +41,11 @@ export default function EventsForm(props) {
     }
   };
 
-  console.log("Categoriesprops", Categories);
-  const categoryOptions = Categories.map((category) => ({
-    label: category.Name,
-    value: category.Name,
-  }));
-  console.log("categoryNames", categoryOptions);
-
   useEffect(() => {
-    if (recordForEdit != null) {
-      setValues({
-        ...recordForEdit,
-      });
-    }
+    if (recordForEdit != null);
+    setValues({
+      ...recordForEdit,
+    });
     const today = new Date();
     const formattedDate = today.toISOString().split("T")[0];
     setDefaultDate(formattedDate);
@@ -80,62 +64,11 @@ export default function EventsForm(props) {
             required
           ></controls.Input>
           <controls.Input
-            label="Color"
-            type="color"
-            name="TicketColor"
-            value={values.TicketColor}
-            onChange={handleInputChange}
-            error={errors.TicketColor}
-            required
-          ></controls.Input>
-          <controls.TextArea
-            label="Description"
-            name="Description"
-            value={values.Description}
-            onChange={handleInputChange}
-            error={errors.Description}
-            multiline
-            minrows={4}
-            variant="outlined"
-            required
-          ></controls.TextArea>
-          <Box sx={{ minWidth: 120 }}>
-            <controls.Select
-              label="Type"
-              name="Type"
-              value={values.Type}
-              onChange={handleInputChange}
-              options={Types}
-              error={errors.Type}
-              required
-            ></controls.Select>
-          </Box>
-          <Box sx={{ minWidth: 120 }}>
-            <controls.Select
-              label="CategoryName"
-              name="CategoryName"
-              value={values.CategoryName}
-              onChange={handleInputChange}
-              options={categoryOptions}
-              error={errors.CategoryName}
-              required
-            ></controls.Select>
-          </Box>
-          <controls.Input
             label="Price"
             name="Price"
             value={values.Price}
             onChange={handleInputChange}
             error={errors.Price}
-            required
-          ></controls.Input>
-          <controls.Input
-            label="NbStand"
-            name="NbStand"
-            type="number"
-            value={values.NbStand}
-            onChange={handleInputChange}
-            error={errors.NbStand}
             required
           ></controls.Input>
           <controls.Input

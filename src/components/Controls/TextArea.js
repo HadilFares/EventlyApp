@@ -10,7 +10,7 @@ export default function TextArea(props) {
       name={name}
       value={value}
       onChange={onChange}
-      startIcon={icon}
+      starticon={icon}
       {...other}
       {...(error && { error: true, helperText: error })}
     />

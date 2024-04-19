@@ -11,6 +11,7 @@ import Select from "./Select";
 import Time from "./Time";
 import Date from "./Date";
 import TextArea from "./TextArea";
+import UnstyledSelectIntroduction from "./NewSelect";
 const controls = {
   Input,
   Button,
@@ -24,6 +25,7 @@ const controls = {
   Time,
   Date,
   TextArea,
+  UnstyledSelectIntroduction,
 };
 
 export default controls;

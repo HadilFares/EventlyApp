@@ -11,7 +11,7 @@ export default function Input(props) {
       name={name}
       value={value}
       onChange={onChange}
-      startIcon={icon}
+      starticon={icon}
       {...other}
       {...(error && { error: true, helperText: error })}
     />

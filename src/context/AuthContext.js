@@ -12,6 +12,7 @@ export const AuthProvider = (props) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(false);
+  const token = localStorage.getItem("token");
 
   //functions
   const signIn = (userInfo) => {
@@ -39,7 +40,6 @@ export const AuthProvider = (props) => {
   };
 
   const DecodeToken = async () => {
-    const token = localStorage.getItem("token");
     console.log("Token:", token);
     try {
       const response = await axios.get(
@@ -61,7 +61,6 @@ export const AuthProvider = (props) => {
     }
   };
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
       return;
@@ -70,7 +69,7 @@ export const AuthProvider = (props) => {
     //appel api decode
     //setUser()
     //setisloading(false)
-  }, []);
+  }, [token]);
   const signOut = async () => {
     localStorage.clear();
     navigate("/login");

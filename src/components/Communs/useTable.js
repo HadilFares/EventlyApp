@@ -113,8 +113,8 @@ export default function useTable(records, headCells, filterFn) {
       style={{
         fontFamily: "cerapro-Medium",
       }}
-      onChangePage={handleChangePage}
-      onChangeRowsPerPage={handleChangeRowsPerPage}
+      onPageChange={handleChangePage}
+      onRowsPerPageChange={handleChangeRowsPerPage}
     />
   );
 

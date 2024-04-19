@@ -15,7 +15,8 @@ export default function Select(props) {
       value,
     },
   });
-
+  console.log("value", value);
+  console.log("name", name);
   return (
     <FormControl>
       <InputLabel>{label}</InputLabel>
