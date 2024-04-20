@@ -26,6 +26,7 @@ import Content from "../../Communs/Content";
 import controls from "../../Controls/controls";
 import { useAuth } from "../../../context/AuthContext";
 import EventsForm from "./EventsForm";
+import TicketForm from "./TicketForm";
 //import ModeEditIcon from "@mui/icons-material/ModeEdit";
 const headCells = [
   { id: "", label: "" },
@@ -45,9 +46,11 @@ const headCells = [
 
 export default function Events() {
   //const [isLoggedIn, setIsLoggedIn] = useState();
+  const [popupType, setPopupType] = useState("event");
   const [AllEvents, setAllEvents] = useState([]);
   const [openPopup, setOpenPopup] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
+  const [addTicket, setAddTicket] = useState(null);
   const [Categories, setCategories] = useState([]);
   const { user, isLoading } = useAuth();
   // console.log("userAuth", user.ID);
@@ -66,9 +69,7 @@ export default function Events() {
       return items;
     },
   });
-  const [open, setOpen] = React.useState(false);
-  // const handleOpen = () => setOpen(true);
-  // const handleClose = () => setOpen(false);
+
   const { TblContainer, TblHead, TblPagination, recordsAfterPagingAndSorting } =
     useTable(AllEvents, headCells, filterFn);
 
@@ -277,12 +278,19 @@ export default function Events() {
 
     resetForm();
     setRecordForEdit(null);
+    setAddTicket(null);
     setOpenPopup(false);
     findAllEvents();
   };
-  const openInPopup = (item) => {
+  const openInPopup = (item, type) => {
     console.log("#item", item);
-    setRecordForEdit({ ...item });
+    if (type === "ticket") {
+      setPopupType("ticket");
+      setAddTicket({ ...item });
+    } else {
+      setRecordForEdit({ ...item });
+      setPopupType("event");
+    }
 
     setOpenPopup(true);
   };
@@ -371,6 +379,16 @@ export default function Events() {
                 }}
               />
             </Button>
+            <Button
+              size="small"
+              color="primary"
+              variant="contained"
+              onClick={() => {
+                openInPopup(row, "ticket");
+              }}
+            >
+              Add Ticket
+            </Button>
           </TableCell>
         </TableRow>
       </React.Fragment>
@@ -400,17 +418,23 @@ export default function Events() {
                 </TableBody>
               </Table>
               <Popup
-                title="Events Form"
+                title={popupType === "event" ? "Events Form" : "Ticket Form"}
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}
               >
-                <EventsForm
-                  recordForEdit={recordForEdit}
-                  addOrEdit={addOrEdit}
-                  Categories={Categories}
-                />
+                {popupType === "event" ? (
+                  <EventsForm
+                    recordForEdit={recordForEdit}
+                    addOrEdit={addOrEdit}
+                    Categories={Categories}
+                  />
+                ) : (
+                  <TicketForm
+                    addTicket={addTicket}
+                    setOpenPopup={setOpenPopup}
+                  />
+                )}
               </Popup>
-
               <Notification
                 notify={notify}
                 setNotify={setNotify}

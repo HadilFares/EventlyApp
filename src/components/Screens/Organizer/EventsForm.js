@@ -14,6 +14,7 @@ export default function EventsForm(props) {
     { label: "Salons", value: "Salons" },
     { label: "Expositions", value: "Expositions" },
   ];
+
   const initialFValues = {
     Id: 0,
     Name: "",
@@ -79,15 +80,7 @@ export default function EventsForm(props) {
             error={errors.Name}
             required
           ></controls.Input>
-          <controls.Input
-            label="Color"
-            type="color"
-            name="TicketColor"
-            value={values.TicketColor}
-            onChange={handleInputChange}
-            error={errors.TicketColor}
-            required
-          ></controls.Input>
+
           <controls.TextArea
             label="Description"
             name="Description"
