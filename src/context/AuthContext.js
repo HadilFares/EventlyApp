@@ -22,10 +22,10 @@ export const AuthProvider = (props) => {
     localStorage.setItem("token", Token);
     console.log(rest);
     setUser(rest);
-    if (userInfo.Roles.includes("Admin")) {
+    if (userInfo?.Roles?.includes("Admin")) {
       console.log("test");
       return navigate("/admin/users");
-    } else if (userInfo.Roles.includes("Organizer")) {
+    } else if (userInfo?.Roles?.includes("Organizer")) {
       return navigate("organizer/events");
     } /* else navigate("/dashboardExhibitor", { replace: true });*/
   };

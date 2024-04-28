@@ -15,6 +15,7 @@ import Typography from "@mui/material/Typography";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import CelebrationIcon from "@mui/icons-material/Celebration";
+import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import { useAuth } from "../../context/AuthContext";
 import NavBar from "./NavBar";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -51,7 +52,11 @@ export default function CustomDrawer({ children }) {
     <AccountBoxIcon />,
     <CelebrationIcon />,
   ];
-  const userIcons = [<CategoryIcon />, <CelebrationIcon />];
+  const userIcons = [
+    <CategoryIcon />,
+    <CelebrationIcon />,
+    <SettingsSuggestIcon />,
+  ];
 
   // Mapping between item names and page paths
   const pagePaths = {
@@ -61,11 +66,12 @@ export default function CustomDrawer({ children }) {
     Events: "admin/events",
     AllEvents: "organizer/events",
     Categories: "organizer/categories",
+    MyCategories: "organizer/mycategories",
   };
 
-  const items = user?.Roles.includes("Admin")
+  const items = user?.Roles?.includes("Admin")
     ? ["Users", "PendingAccounts", "Events", "PendingEvents"]
-    : ["AllEvents", "Categories"];
+    : ["AllEvents", "Categories", "MyCategories"];
 
   const DrawerList = (
     <Box sx={{ display: "flex" }} marginRight={"40px"}>
@@ -79,7 +85,7 @@ export default function CustomDrawer({ children }) {
             <ListItem key={text} disablePadding>
               <ListItemButton component={Link} to={pagePaths[text]}>
                 <ListItemIcon>
-                  {user?.Roles.includes("Admin")
+                  {user?.Roles?.includes("Admin")
                     ? adminIcons[index]
                     : userIcons[index]}
                 </ListItemIcon>

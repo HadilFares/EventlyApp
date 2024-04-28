@@ -9,27 +9,30 @@ import {
   Route,
   BrowserRouter,
 } from "react-router-dom";
-import { AuthRoutes } from "./Routes/index";
-import AdminHeader from "./components/Header/AdminHeader";
-import AdminRoutes from "./Routes/AdminRoutes";
+
 import Login from "./components/Screens/Auth/Login";
-import Form from "./components/Screens/Auth/Form";
-import OrganizerRoutes from "./Routes/OrganizerRoutes";
+import Form from "./components/Screens/Auth/RegisterForm";
 import PrivateRoutes from "./Routes/PrivateRoutes";
 import Users from "./components/Screens/Admin/Users";
 import AdminDash from "./components/Screens/Admin/AdminDash";
 import CustomDrawer from "./components/Communs/Drawer";
-import NavBar from "./components/Communs/NavBar";
 import { AuthProvider } from "./context/AuthContext";
 import PendingAccounts from "./components/Screens/Admin/PendingAccounts";
 import Events from "./components/Screens/Organizer/Events";
 import PendingEvents from "./components/Screens/Admin/PendingEvents";
+import RegisterForm from "./components/Screens/Auth/RegisterForm";
+import Categories from "./components/Screens/Organizer/Categories";
+import ListOrganizerCategories from "./components/Screens/Organizer/ListOrganizerCategories";
+import TicketPopup from "./components/Screens/Organizer/TicketPopup";
 function App() {
   const methods = useForm(); // Initialize useForm here
   const { watch, errors } = methods;
 
   return (
     <Router>
+      <Routes>
+        <Route path={"register"} element={<RegisterForm />} />
+      </Routes>
       <AuthProvider>
         <CustomDrawer>
           <Routes>
@@ -44,6 +47,13 @@ function App() {
               element={<PrivateRoutes role="Organizer" />}
             >
               <Route path={"events"} element={<Events />} />
+              <Route path={"categories"} element={<Categories />} />
+              <Route
+                path={"mycategories"}
+                element={<ListOrganizerCategories />}
+              />
+
+              <Route path={"myticket"} element={<TicketPopup />} />
             </Route>
             <Route element={<Login />} path="/login" />
             <Route element={<Form />} path="/register" />

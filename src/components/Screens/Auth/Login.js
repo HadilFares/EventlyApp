@@ -5,9 +5,25 @@ import { Navigate, useNavigate, Redirect } from "react-router-dom";
 import { variables } from "../../../variables";
 import "../.././../App.css";
 import "../../../css/register.css";
+import OutlinedInput from "@mui/material/OutlinedInput";
+
+import IconButton from "@mui/material/IconButton";
+import InputLabel from "@mui/material/InputLabel";
+import InputAdornment from "@mui/material/InputAdornment";
+import FormHelperText from "@mui/material/FormHelperText";
+import FormControl from "@mui/material/FormControl";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Notification from "../../Controls/Notification";
 import { AuthProvider, useAuth } from "../../../context/AuthContext";
 export default function Login() {
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
   const { signIn } = useAuth();
   const {
     register,
@@ -33,28 +49,23 @@ export default function Login() {
         },
         body: JSON.stringify(data),
       });
-      console.log(data);
       const result = await response.json();
-      console.log(result);
+      console.log("#result", result);
       signIn(result);
-      // console.log(result.Roles[0]);
 
       if (result.ISAuthenticated) {
         console.log("Sign up successful");
-      }
-    } catch (error) {
-      console.error("Error signing up", error.message);
-      if (
-        error.response &&
-        error.response.status >= 400 &&
-        error.response.status <= 500
-      ) {
+      } else {
+        // Check if the Message property exists before attempting to use it
+
         setNotify({
           isOpen: true,
-          message: error.response.data.message,
+          message: result,
           type: "error",
         });
       }
+    } catch (error) {
+      console.error("Error signing up", error.message);
     }
   };
   return (
@@ -76,19 +87,52 @@ export default function Login() {
               className="flex flex-col"
               onSubmit={handleSubmit(onSubmit)}
             >
-              <input
-                type="email"
-                {...register("Email", { required: true })}
-                placeholder="Email "
-              />
-              {errors.Email?.type === "required" && "Email is required"}
+              <FormControl sx={{ m: 1, width: "35ch" }} variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-password">
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  {...register("Password", { required: true })}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
+                />
+                {errors.Email?.type === "required" && (
+                  <FormHelperText error>Email is required</FormHelperText>
+                )}
+              </FormControl>
+              <FormControl sx={{ m: 1, width: "35ch" }} variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-email">
+                  Email
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-email"
+                  type="email"
+                  {...register("Email", { required: true })}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      {/* You can add any adornment here if needed */}
+                    </InputAdornment>
+                  }
+                  label="Email"
+                />
+                {errors.Email?.type === "required" && (
+                  <FormHelperText error>Email is required</FormHelperText>
+                )}
+              </FormControl>
 
-              <input
-                type="password"
-                {...register("Password", { required: true })}
-                placeholder="password"
-              />
-              {errors.Password?.type === "required" && "Password is required"}
               <button className="btn" type="submit">
                 Login
               </button>

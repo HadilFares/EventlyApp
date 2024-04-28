@@ -1,14 +1,24 @@
 import { Grid, makeStyles } from "@material-ui/core";
 import { React, useEffect, useState } from "react";
-import { useForm, Form } from "../../Communs/UseForm";
+import { useForm } from "react-hook-form";
 import controls from "../../Controls/controls";
 import "./Ticket.css";
 import axios from "axios";
 import { variables } from "../../../variables";
-
+import "./Form.css";
 import "react-time-picker/dist/TimePicker.css";
-import TicketPopup from "./TicketPopup";
-export default function TicketForm({ setOpenPopup, addTicket }) {
+import { useAuth } from "../../../context/AuthContext";
+import { Form } from "../../Communs/UseForm";
+import InputLabel from "@mui/material/InputLabel";
+import InputAdornment from "@mui/material/InputAdornment";
+import FormHelperText from "@mui/material/FormHelperText";
+import FormControl from "@mui/material/FormControl";
+import OutlinedInput from "@mui/material/OutlinedInput";
+
+export default function TicketForm(props) {
+  const { ticketInfo, addTicket, handleEditSubmit, mode } = props;
+
+  console.log("AddTicketpass", addTicket);
   const [DefaultDate, setDefaultDate] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [notify, setNotify] = useState({
@@ -16,6 +26,37 @@ export default function TicketForm({ setOpenPopup, addTicket }) {
     message: "",
     type: "",
   });
+  const isAddMode = mode === "add";
+  const defaultValues = isAddMode
+    ? {
+        Id: "",
+        EventId: addTicket?.Id || "",
+        Name: addTicket?.Name || "",
+        StartDate: addTicket?.StartDate || "",
+        EndDate: addTicket?.EndDate || "",
+        StartTime: addTicket?.StartTime || "",
+        EndTime: addTicket?.EndTime || "",
+        Location: addTicket?.Location || "",
+        Price: addTicket?.Price || "",
+        TicketColor: addTicket?.TicketColor || "",
+      }
+    : {};
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: mode === "add" ? { Name: addTicket.Name } : {},
+  });
+  const { user } = useAuth();
+  console.log("#user", user);
+
+  const resetForm = () => {
+    reset(); // This resets the form fields
+  };
+
   const convertDateFormat = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -38,19 +79,6 @@ export default function TicketForm({ setOpenPopup, addTicket }) {
 
     return `${hours}:${minutes}`;
   }
-
-  const initialFValues = {
-    Id: "",
-    EventId: addTicket.Id,
-    Name: "",
-    StartDate: "",
-    EndDate: "",
-    StartTime: "",
-    EndTime: "",
-    Location: "",
-    Price: "",
-    TicketColor: "",
-  };
 
   const config = {
     headers: {
@@ -79,6 +107,26 @@ export default function TicketForm({ setOpenPopup, addTicket }) {
     }
     return `${hours}:${minutes}`;
   }
+
+  const EditTicket = async (ticketInfo) => {
+    try {
+      await axios.put(
+        variables.API_URL + `Tiicket/${ticketInfo.Id}`,
+        {
+          Name: ticketInfo.Name,
+          StartDate: ticketInfo.StartDate,
+          EndDate: ticketInfo.EndDate,
+          StartTime: ticketInfo.StartTime,
+          EndTime: ticketInfo.EndTime,
+          Location: ticketInfo.Location,
+          Price: ticketInfo.Price,
+        },
+        config
+      );
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
 
   const addOrEditTicket = async (TicketInfo) => {
     console.log("#Ticketinfo", TicketInfo);
@@ -114,120 +162,158 @@ export default function TicketForm({ setOpenPopup, addTicket }) {
       //  setloading(false);
       console.log(error.response.data.message);
     }
-
-    //  resetForm();
-    // setRecordForEdit(null);
-    // setAddTicket(null);
-    // setOpenPopup(false);
   };
-  console.log("addticket", addTicket);
-  const validate = (fieldValues = values) => {
-    let temp = { ...errors };
-    setErrors({
-      ...temp,
-    });
 
-    if (fieldValues == values) return Object.values(temp).every((x) => x == "");
-  };
-  const { values, setValues, errors, setErrors, handleInputChange, resetForm } =
-    useForm(initialFValues, true, validate);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(e);
-    console.log("#Values", values);
-    if (validate()) {
-      addOrEditTicket({ ...values });
+  const Formhandle = (data) => {
+    if (mode === "edit") {
+      EditTicket(data);
+    } else {
+      addOrEditTicket(data);
     }
   };
 
-  useEffect(() => {
-    /*if (recordForEdit != null);*/
-    if (addTicket)
-      setValues({
-        ...addTicket,
-        StartDate: addTicket.StartDate ? addTicket.StartDate.split("T")[0] : "",
-      });
-  }, [addTicket]);
-
   return (
     <>
-      <Form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(Formhandle)}>
         {!isPopupOpen && (
-          <Grid container>
+          <Grid container spacing={4}>
             <Grid item xs={6}>
-              <controls.Input
-                label="Name"
-                name="Name"
-                value={values.Name}
-                onChange={handleInputChange}
-                error={errors.Name}
-                required
-              ></controls.Input>
-              <controls.Input
-                label="Color"
-                type="color"
-                name="TicketColor"
-                value={values.TicketColor}
-                onChange={handleInputChange}
-                error={errors.TicketColor}
-                required
-              ></controls.Input>
-              <controls.Input
-                label="Price"
-                name="Price"
-                value={values.Price}
-                onChange={handleInputChange}
-                error={errors.Price}
-                required
-              ></controls.Input>
-              <controls.Input
-                label="Location"
-                name="Location"
-                value={values.Location}
-                onChange={handleInputChange}
-                error={errors.Location}
-                required
-              ></controls.Input>
+              <FormControl>
+                <div>Name</div>
+                <OutlinedInput
+                  type="text"
+                  {...register("Name", { required: true })}
+                  className="tight-spacing-input"
+                />
+                {errors.Name?.type === "required" && (
+                  <FormHelperText error>Name is required</FormHelperText>
+                )}
+              </FormControl>
+              <br />
+              <FormControl>
+                <div>TicketColor</div>
+                <OutlinedInput
+                  id="outlined-adornment-email"
+                  type="color"
+                  {...register("TicketColor", { required: true })}
+                  label="TicketColor"
+                  className="tight-spacing-input"
+                />
+                {errors.Name?.type === "required" && (
+                  <FormHelperText error>TicketColor</FormHelperText>
+                )}
+              </FormControl>
+              <br />
+              <FormControl>
+                <div>Price</div>
+                <OutlinedInput
+                  id="outlined-adornment-email"
+                  type="number"
+                  {...register("Price", { required: true })}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      {/* You can add any adornment here if needed */}
+                    </InputAdornment>
+                  }
+                  label="Price"
+                  className="tight-spacing-input"
+                />
+                {errors.Name?.type === "required" && (
+                  <FormHelperText error>Price</FormHelperText>
+                )}
+              </FormControl>
+              <FormControl>
+                <div>Location</div>
+                <OutlinedInput
+                  id="outlined-adornment-email"
+                  type="text"
+                  {...register("Location", { required: true })}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      {/* You can add any adornment here if needed */}
+                    </InputAdornment>
+                  }
+                  label="Location"
+                  className="tight-spacing-input"
+                />
+                {errors.Name?.type === "required" && (
+                  <FormHelperText error>Location</FormHelperText>
+                )}
+              </FormControl>
             </Grid>
             <Grid item xs={6}>
-              <controls.Input
-                label="StartDate"
-                name="StartDate"
-                type="date"
-                value={convertDateFormat(values.StartDate)}
-                onChange={handleInputChange}
-                error={errors.StartDate}
-                required
-              ></controls.Input>
-              <controls.Input
-                label="EndDate"
-                name="EndDate"
-                type="date"
-                value={convertDateFormat(values.EndDate)}
-                onChange={handleInputChange}
-                error={errors.EndDate}
-                required
-              ></controls.Input>
+              <FormControl>
+                <div>StartDate</div>
+                <OutlinedInput
+                  type="date"
+                  {...register("StartDate", { required: true })}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      {/* You can add any adornment here if needed */}
+                    </InputAdornment>
+                  }
+                  lable="StartDate"
+                  className="tight-spacing-input"
+                />
+                {errors.Name?.type === "required" && (
+                  <FormHelperText error>StartDate</FormHelperText>
+                )}
+              </FormControl>
 
-              <controls.Input
-                label="StartTime"
-                type="time"
-                name="StartTime"
-                value={convertTo24HourFormat(values.StartTime)}
-                onChange={handleInputChange}
-                error={errors.StartTime}
-                required
-              ></controls.Input>
-              <controls.Input
-                label="EndTime"
-                name="EndTime"
-                type="time"
-                value={convertTo24HourFormat(values.EndTime)}
-                onChange={handleInputChange}
-                error={errors.EndTime}
-                required
-              ></controls.Input>
+              <FormControl>
+                <div>EndDate</div>
+                <OutlinedInput
+                  type="date"
+                  {...register("EndDate", { required: true })}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      {/* You can add any adornment here if needed */}
+                    </InputAdornment>
+                  }
+                  label="EndDate"
+                  className="tight-spacing-input"
+                />
+                {errors.Name?.type === "required" && (
+                  <FormHelperText error>EndDate</FormHelperText>
+                )}
+              </FormControl>
+              <FormControl>
+                <div>StartTime</div>
+                <OutlinedInput
+                  id="outlined-adornment-email"
+                  type="time"
+                  {...register("StartTime", { required: true })}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      {/* You can add any adornment here if needed */}
+                    </InputAdornment>
+                  }
+                  label="StartTime"
+                  className="tight-spacing-input"
+                />
+                {errors.Name?.type === "required" && (
+                  <FormHelperText error>StartTime</FormHelperText>
+                )}
+              </FormControl>
+              <FormControl>
+                <div>EndTime</div>
+                <OutlinedInput
+                  id="outlined-adornment-email"
+                  type="time"
+                  {...register("EndTime", { required: true })}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      {/* You can add any adornment here if needed */}
+                    </InputAdornment>
+                  }
+                  label="EndTime"
+                  className="tight-spacing-input"
+                />
+                {errors.Name?.type === "required" && (
+                  <FormHelperText error>EndTime</FormHelperText>
+                )}
+              </FormControl>
+
               <div>
                 <controls.Button type="submit" text="Submit" />
                 <controls.Button
@@ -240,8 +326,8 @@ export default function TicketForm({ setOpenPopup, addTicket }) {
             <Grid item xs={9}></Grid>
           </Grid>
         )}{" "}
-      </Form>
-      <div className="ticket-container">{isPopupOpen && <TicketPopup />}</div>
+      </form>
+      {/*<div className="ticket-container">{isPopupOpen && <TicketPopup />}</div>*/}
     </>
   );
 }

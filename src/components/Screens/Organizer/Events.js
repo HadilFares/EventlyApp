@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import axios from "axios";
 import {
   IconButton,
@@ -20,6 +26,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import useTable from "../../Communs/useTable";
+import LocalActivityIcon from "@mui/icons-material/LocalActivity";
 import ConfirmDialog from "../../Controls/ConfirmDialog";
 import Notification from "../../Controls/Notification";
 import Content from "../../Communs/Content";
@@ -27,6 +34,7 @@ import controls from "../../Controls/controls";
 import { useAuth } from "../../../context/AuthContext";
 import EventsForm from "./EventsForm";
 import TicketForm from "./TicketForm";
+import TicketPopup from "./TicketPopup";
 //import ModeEditIcon from "@mui/icons-material/ModeEdit";
 const headCells = [
   { id: "", label: "" },
@@ -52,6 +60,9 @@ export default function Events() {
   const [recordForEdit, setRecordForEdit] = useState(null);
   const [addTicket, setAddTicket] = useState(null);
   const [Categories, setCategories] = useState([]);
+  const [ticketInfo, setTicketInfo] = useState("");
+  const [showTicketPopUp, setShowTicketPopUp] = useState(false);
+  const navigate = useNavigate();
   const { user, isLoading } = useAuth();
   // console.log("userAuth", user.ID);
   const [notify, setNotify] = useState({
@@ -150,6 +161,24 @@ export default function Events() {
       });
       setAllEvents(formattedEvents);
       console.log("#formatedevents", formattedEvents);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const GetTicket = async (id) => {
+    try {
+      const result = await axios.get(
+        variables.API_URL + `Ticket/GetTicketByEventId/${id}`,
+        config
+      );
+      console.log("resultticket", result);
+      setTicketInfo(result.data);
+      return navigate("/organizer/myticket", {
+        state: { ticketInfo: result.data },
+      });
+
+      setShowTicketPopUp(true);
     } catch (error) {
       console.log(error);
     }
@@ -294,6 +323,7 @@ export default function Events() {
 
     setOpenPopup(true);
   };
+
   console.log("#record", recordForEdit);
   function Row(props) {
     const { row } = props;
@@ -353,6 +383,7 @@ export default function Events() {
             <Button
               color="primary"
               onClick={() => {
+                setPopupType("event");
                 openInPopup(row);
               }}
 
@@ -385,9 +416,13 @@ export default function Events() {
               variant="contained"
               onClick={() => {
                 openInPopup(row, "ticket");
+                setPopupType("ticket");
               }}
             >
               Add Ticket
+            </Button>
+            <Button color="secondary" onClick={() => GetTicket(row.Id)}>
+              <LocalActivityIcon fontSize="medium" />
             </Button>
           </TableCell>
         </TableRow>
@@ -429,10 +464,7 @@ export default function Events() {
                     Categories={Categories}
                   />
                 ) : (
-                  <TicketForm
-                    addTicket={addTicket}
-                    setOpenPopup={setOpenPopup}
-                  />
+                  <TicketForm mode="add" addTicket={addTicket} />
                 )}
               </Popup>
               <Notification
@@ -455,6 +487,7 @@ export default function Events() {
                 onClick={() => {
                   setOpenPopup(true);
                   setRecordForEdit(null);
+                  setPopupType("event");
                 }}
               />
             </div>

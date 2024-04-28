@@ -1,11 +1,11 @@
 import React from "react";
 import RegisterPic from "../../../assets/Register.jpg";
 import { useForm } from "react-hook-form";
-import "../../../css/register.css"
+import "../../../css/register.css";
 import { variables } from "../../../variables";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-export default function Form() {
+export default function RegisterForm() {
   const {
     register,
     handleSubmit,
@@ -28,11 +28,24 @@ export default function Form() {
       const result = await response.json();
       console.log(result);
       if (result.ISAuthenticated) {
-       // history("/login");
-       // window.location.reload();
+        // history("/login");
+        // window.location.reload();
         console.log("Sign up successful");
       } else {
-        console.error("Sign up failed: " + result.Message);
+        // Check if the error message indicates an issue with the email or password
+        if (
+          result.Message.includes("email") ||
+          result.Message.includes("password")
+        ) {
+          alert("Incorrect email or password.");
+          /*  setNotify({
+            isOpen: true,
+            message: "Incorrect email or password",
+            type: "error",
+          });*/
+        } else {
+          console.error("Sign up failed: " + result.Message);
+        }
       }
     } catch (error) {
       console.error("Error signing up", error.message);
