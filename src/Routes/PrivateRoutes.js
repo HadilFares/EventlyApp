@@ -17,7 +17,7 @@ const PrivateRoutes = ({ role }) => {
   return user?.ISAuthenticated && user.Roles.includes(role) ? (
     <Outlet />
   ) : (
-    <Navigate to="/login" />
+    <Navigate to="/evently" />
   );
 };
 

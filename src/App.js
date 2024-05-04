@@ -11,7 +11,6 @@ import {
 } from "react-router-dom";
 
 import Login from "./components/Screens/Auth/Login";
-import Form from "./components/Screens/Auth/RegisterForm";
 import PrivateRoutes from "./Routes/PrivateRoutes";
 import Users from "./components/Screens/Admin/Users";
 import AdminDash from "./components/Screens/Admin/AdminDash";
@@ -24,14 +23,18 @@ import RegisterForm from "./components/Screens/Auth/RegisterForm";
 import Categories from "./components/Screens/Organizer/Categories";
 import ListOrganizerCategories from "./components/Screens/Organizer/ListOrganizerCategories";
 import TicketPopup from "./components/Screens/Organizer/TicketPopup";
+import Home from "./components/Screens/LandingPage/home/Home.jsx";
+import Footer from "./components/Screens/LandingPage/common/footer/Footer.jsx";
 function App() {
   const methods = useForm(); // Initialize useForm here
   const { watch, errors } = methods;
 
+  //footer/header
   return (
     <Router>
       <Routes>
-        <Route path={"register"} element={<RegisterForm />} />
+        <Route element={<RegisterForm />} path="/register" />
+        <Route path="/evently" element={<Home />} />
       </Routes>
       <AuthProvider>
         <CustomDrawer>
@@ -56,7 +59,6 @@ function App() {
               <Route path={"myticket"} element={<TicketPopup />} />
             </Route>
             <Route element={<Login />} path="/login" />
-            <Route element={<Form />} path="/register" />
           </Routes>
         </CustomDrawer>
       </AuthProvider>

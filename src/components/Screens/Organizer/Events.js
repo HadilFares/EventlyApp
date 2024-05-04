@@ -177,8 +177,6 @@ export default function Events() {
       return navigate("/organizer/myticket", {
         state: { ticketInfo: result.data },
       });
-
-      setShowTicketPopUp(true);
     } catch (error) {
       console.log(error);
     }
@@ -281,15 +279,32 @@ export default function Events() {
     } else if (recordForEdit) {
       console.log("#recordFordit", recordForEdit);
       console.log("#kdcfvj", recordForEdit.Id);
-
+      const bjj = {
+        organizerName: "string",
+        organizerLastName: "string",
+        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        name: "koussay",
+        description: "welcomee",
+        startDate: "2024-05-03",
+        endDate: "2024-05-03",
+        startTime: "23:49",
+        endTime: "23:49",
+        type: "Foire",
+        location: "sousse",
+        price: 2.0,
+        nbStand: 30,
+        ratings: 0,
+        organizerId: "61258f32-3996-4ab8-8c74-c8a66eace766",
+        categoryName: "IT",
+      };
       await axios
         .put(
           variables.API_URL + `Event/${recordForEdit.Id}`,
           {
             Name: EventInfo.Name,
             Description: EventInfo.Description,
-            StartDate: formatDate(EventInfo.StartDate),
-            EndDate: formatDate(EventInfo.EndDate),
+            StartDate: EventInfo.StartDate,
+            EndDate: EventInfo.EndDate,
             StartTime: EventInfo.StartTime,
             EndTime: EventInfo.EndTime,
             Type: EventInfo.Type,
@@ -464,7 +479,11 @@ export default function Events() {
                     Categories={Categories}
                   />
                 ) : (
-                  <TicketForm mode="add" addTicket={addTicket} />
+                  <TicketForm
+                    mode="add"
+                    addTicket={addTicket}
+                    setOpenPopup={setOpenPopup}
+                  />
                 )}
               </Popup>
               <Notification

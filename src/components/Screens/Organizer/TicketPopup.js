@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import "./Ticket.css";
+import axios from "axios";
+import { variables } from "../../../variables";
 import { useLocation } from "react-router-dom";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import PaidIcon from "@mui/icons-material/Paid";
 import controls from "../../Controls/controls";
 import Modal from "@mui/material/Modal";
-
+import Form from "./Form.css";
 import { Box } from "@mui/material";
 import TicketForm from "./TicketForm";
 import Popup from "../../Controls/PopUp";
@@ -23,20 +25,28 @@ const style = {
   p: 4,
 };
 const TicketPopup = () => {
+  const location = useLocation();
   const [openPopup, setOpenPopup] = useState(false);
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const location = useLocation();
-  const ticketInfo = location.state?.ticketInfo;
+  const [ticketInfo, setTicketInfo] = useState(location.state?.ticketInfo);
+  const handleOpenPopUp = () => setOpenPopup(true);
+  const handleClosePopUp = () => setOpenPopup(false);
+  //const ticketInfo =;
   console.log("TicketInfoPop", ticketInfo);
   const startDate = new Date(ticketInfo.StartDate);
-  const formattedDate = startDate.toISOString().slice(0, 10);
+  //const formattedDate = startDate.toISOString().slice(0, 10);
+  const formattedDate = startDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
   const EndDate = new Date(ticketInfo.EndDate);
-  const formattedEndDate = EndDate.toISOString().slice(0, 10);
-  const openInPopup = (item) => {
-    setOpenPopup(true);
-  };
+  const formattedEndDate = EndDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
   function convertTo12HourFormat(time24) {
     const [hour, minute, second] = time24.split(":").map(Number);
     let period = "AM";
@@ -57,23 +67,64 @@ const TicketPopup = () => {
       .toString()
       .padStart(2, "0")}${period}`;
   }
+  const config = {
+    headers: {
+      "access-control-allow-origin": "*",
+      Accept: "application/json",
+      "Content-type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  };
 
   const StartTime = convertTo12HourFormat(ticketInfo.StartTime);
   const EndTime = convertTo12HourFormat(ticketInfo.EndTime);
 
+  const GetTicket = async (id) => {
+    console.log("getticketedit", id);
+    try {
+      const result = await axios.get(
+        variables.API_URL + `Ticket/GetTicket/${id}`,
+        config
+      );
+      console.log("resultticketgetafteredit", result);
+      setTicketInfo(result.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEditSuccess = async (updatedTicketInfo) => {
+    console.log("#updatedticket", updatedTicketInfo);
+    // Assuming updatedTicketInfo is the updated ticket information returned from the edit operation
+    setTicketInfo(updatedTicketInfo);
+    // Optionally, fetch the updated ticket information from the backend
+    await GetTicket(updatedTicketInfo.Id);
+  };
+
   return (
-    <>
+    <div>
       {" "}
       {/* Adjust the marginLeft value as needed */}
       <Box sx={{ marginLeft: 3 }}>
         <controls.Button
           text="Edit Ticket"
-          onClick={handleOpen}
+          onClick={handleOpenPopUp}
         ></controls.Button>
       </Box>
-      <Popup title={"Ticket Form"} setOpenPopup={true} openPopup={openPopup}>
-        <TicketForm mode="edit" TicketInfo={ticketInfo} />
-      </Popup>
+      {ticketInfo && (
+        <Popup
+          title={"Ticket Form"}
+          setOpenPopup={setOpenPopup}
+          openPopup={openPopup}
+        >
+          <TicketForm
+            mode="edit"
+            TicketInfo={ticketInfo}
+            setOpenPopup={setOpenPopup}
+            onEditSuccess={handleEditSuccess}
+          />
+        </Popup>
+      )}
       <div>
         <div class="container">
           <div class="item">
@@ -113,7 +164,7 @@ const TicketPopup = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

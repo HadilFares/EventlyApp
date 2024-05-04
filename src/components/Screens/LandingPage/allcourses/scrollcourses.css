@@ -1,0 +1,13 @@
+.contentscroll {
+  width: 100%; /* Adjust based on your layout */
+  overflow-x: auto; /* Enables horizontal scrolling */
+  white-space: nowrap; /* Prevents items from wrapping to the next line */
+}
+
+.boxscroll {
+  display: inline-block; /* Allows boxes to sit side by side */
+  width: 200px; /* Fixed width for each box */
+  margin-right: 20px; /* Space between boxes */
+  margin-left: 20px; /* Space between boxes */
+  box-sizing: border-box; /* Ensures padding and border are included in the width */
+}

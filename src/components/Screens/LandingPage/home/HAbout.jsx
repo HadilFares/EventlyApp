@@ -1,0 +1,23 @@
+import React from "react";
+import Categories from "../allcourses/Categories";
+import Heading from "../common/heading/Heading";
+import "../allcourses/courses.css";
+import { coursesCard } from "../../../../dummydata";
+
+const HAbout = () => {
+  return (
+    <>
+      <section className="homeAbout">
+        <div className="container">
+          <Heading
+            subtitle="our courses"
+            title="explore our popular online courses"
+          />
+        </div>
+        <Categories />
+      </section>
+    </>
+  );
+};
+
+export default HAbout;

@@ -16,39 +16,52 @@ import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 
 export default function TicketForm(props) {
-  const { ticketInfo, addTicket, handleEditSubmit, mode } = props;
+  console.log("props", props);
+  const { TicketInfo, addTicket, onEditSuccess, setOpenPopup, mode } = props;
 
   console.log("AddTicketpass", addTicket);
-  const [DefaultDate, setDefaultDate] = useState("");
+
+  console.log("TICKETINFO", TicketInfo);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
     type: "",
   });
-  const isAddMode = mode === "add";
-  const defaultValues = isAddMode
-    ? {
-        Id: "",
-        EventId: addTicket?.Id || "",
-        Name: addTicket?.Name || "",
-        StartDate: addTicket?.StartDate || "",
-        EndDate: addTicket?.EndDate || "",
-        StartTime: addTicket?.StartTime || "",
-        EndTime: addTicket?.EndTime || "",
-        Location: addTicket?.Location || "",
-        Price: addTicket?.Price || "",
-        TicketColor: addTicket?.TicketColor || "",
-      }
-    : {};
 
+  console.log("#StartDate", TicketInfo?.StartDate);
+  const EndDate = new Date(TicketInfo?.EndDate);
+  const StartDate = new Date(TicketInfo?.StartDate);
+  const formattedStartDate = StartDate.toISOString().slice(0, 10);
+  // Format the date to "YYYY-MM-DD"
+  const formattedEndDate = EndDate.toISOString().slice(0, 10);
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: mode === "add" ? { Name: addTicket.Name } : {},
+    defaultValues:
+      mode === "add"
+        ? {
+            Name: addTicket?.Name,
+            StartDate: addTicket?.StartDate,
+            EndDate: addTicket?.EndDate,
+            StartTime: addTicket?.StartTime,
+            EndTime: addTicket?.EndTime,
+            Location: addTicket?.Location,
+            Price: addTicket?.Price,
+          }
+        : {
+            Name: TicketInfo?.Name,
+            StartDate: formattedStartDate,
+            EndDate: formattedEndDate,
+            StartTime: TicketInfo?.StartTime,
+            EndTime: TicketInfo?.EndTime,
+            Location: TicketInfo?.Location,
+            Price: TicketInfo?.Price,
+            TicketColor: TicketInfo?.TicketColor,
+          },
   });
   const { user } = useAuth();
   console.log("#user", user);
@@ -110,32 +123,40 @@ export default function TicketForm(props) {
 
   const EditTicket = async (ticketInfo) => {
     try {
+      console.log("idticketedit", TicketInfo.Id);
+      console.log("ticketinfoEdit", ticketInfo);
       await axios.put(
-        variables.API_URL + `Tiicket/${ticketInfo.Id}`,
+        variables.API_URL + `Ticket/${TicketInfo.Id}`,
         {
+          Id: TicketInfo.Id,
+          EventId: TicketInfo.EventId,
           Name: ticketInfo.Name,
-          StartDate: ticketInfo.StartDate,
-          EndDate: ticketInfo.EndDate,
+          StartDate: new Date(ticketInfo.StartDate + "T20:00:00"),
+          EndDate: new Date(ticketInfo.EndDate + "T20:00:00"),
           StartTime: ticketInfo.StartTime,
           EndTime: ticketInfo.EndTime,
           Location: ticketInfo.Location,
           Price: ticketInfo.Price,
+          TicketColor: ticketInfo.TicketColor,
         },
         config
       );
+      setOpenPopup(false);
+      onEditSuccess(ticketInfo);
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error);
     }
   };
 
   const addOrEditTicket = async (TicketInfo) => {
     console.log("#Ticketinfo", TicketInfo);
+    console.log("idevent", addTicket.Id);
 
     try {
       const { data } = await axios.post(
         variables.API_URL + "Ticket",
         {
-          EventId: TicketInfo.Id,
+          EventId: addTicket.Id,
           Name: TicketInfo.Name,
           StartDate: formatDateForBackend(TicketInfo.StartDate),
           EndDate: formatDateForBackend(TicketInfo.EndDate),
@@ -155,8 +176,8 @@ export default function TicketForm(props) {
           message: "Submitted Successfully",
           type: "success",
         });
-
-        setIsPopupOpen(true);
+        setOpenPopup(false);
+        setIsPopupOpen(false);
       }
     } catch (error) {
       //  setloading(false);
@@ -175,6 +196,11 @@ export default function TicketForm(props) {
   return (
     <>
       <form onSubmit={handleSubmit(Formhandle)}>
+        <input
+          type="hidden"
+          {...register("Id")}
+          value={mode === "add" ? addTicket.Id : TicketInfo.Id}
+        />
         {!isPopupOpen && (
           <Grid container spacing={4}>
             <Grid item xs={6}>

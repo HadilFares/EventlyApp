@@ -62,7 +62,7 @@ export const AuthProvider = (props) => {
   };
   useEffect(() => {
     if (!token) {
-      navigate("/login");
+      navigate("/evently");
       return;
     }
     DecodeToken();
@@ -72,7 +72,7 @@ export const AuthProvider = (props) => {
   }, [token]);
   const signOut = async () => {
     localStorage.clear();
-    navigate("/login");
+    navigate("/evently");
     setUser(null);
   };
 
