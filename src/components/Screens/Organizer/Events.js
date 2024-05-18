@@ -88,7 +88,8 @@ export default function Events() {
     headers: {
       "access-control-allow-origin": "*",
       Accept: "application/json",
-      "Content-type": "application/json",
+      //"Content-type": "application/json",
+      "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   };
@@ -233,26 +234,30 @@ export default function Events() {
 
   const addOrEdit = async (EventInfo, resetForm) => {
     console.log("#Eventinfo", EventInfo);
+    console.log("user", user.ID);
     if (EventInfo.Id == 0) {
+      const formData = new FormData();
+      formData.append("Name", EventInfo.Name);
+      formData.append("Description", EventInfo.Description);
+      formData.append("StartDate", EventInfo.StartDate);
+      formData.append("EndDate", EventInfo.EndDate);
+      formData.append("StartTime", EventInfo.StartTime);
+      formData.append("EndTime", EventInfo.EndTime);
+      formData.append("Type", EventInfo.Type);
+      formData.append("Location", EventInfo.Location);
+      formData.append("Photo", EventInfo.Photo);
+      formData.append("Price", EventInfo.Price);
+      formData.append("NbStand", EventInfo.NbStand);
+      formData.append("OrganizerId", user.ID);
+      formData.append("CategoryName", EventInfo.CategoryName);
+
       try {
         const { data } = await axios.post(
           variables.API_URL + "Event",
-          {
-            Name: EventInfo.Name,
-            Description: EventInfo.Description,
-            StartDate: EventInfo.StartDate,
-            EndDate: EventInfo.EndDate,
-            StartTime: EventInfo.StartTime,
-            EndTime: EventInfo.EndTime,
-            Type: EventInfo.Type,
-            Location: EventInfo.Location,
-            Price: EventInfo.Price,
-            NbStand: EventInfo.NbStand,
-            OrganizerId: user.ID,
-            CategoryName: EventInfo.CategoryName,
-          },
+          formData,
           config
         );
+        console.log("formdata", formData);
         console.log("EventInfoCreate", EventInfo);
         if (data) {
           setNotify({
@@ -279,24 +284,7 @@ export default function Events() {
     } else if (recordForEdit) {
       console.log("#recordFordit", recordForEdit);
       console.log("#kdcfvj", recordForEdit.Id);
-      const bjj = {
-        organizerName: "string",
-        organizerLastName: "string",
-        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        name: "koussay",
-        description: "welcomee",
-        startDate: "2024-05-03",
-        endDate: "2024-05-03",
-        startTime: "23:49",
-        endTime: "23:49",
-        type: "Foire",
-        location: "sousse",
-        price: 2.0,
-        nbStand: 30,
-        ratings: 0,
-        organizerId: "61258f32-3996-4ab8-8c74-c8a66eace766",
-        categoryName: "IT",
-      };
+
       await axios
         .put(
           variables.API_URL + `Event/${recordForEdit.Id}`,
@@ -311,6 +299,7 @@ export default function Events() {
             Location: EventInfo.Location,
             Price: EventInfo.Price,
             NbStand: EventInfo.NbStand,
+            Photo: EventInfo.Photo,
             OrganizerId: user.ID,
             CategoryName: EventInfo.CategoryName,
           },

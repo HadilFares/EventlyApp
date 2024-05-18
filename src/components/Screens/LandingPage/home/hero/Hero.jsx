@@ -1,14 +1,10 @@
 import React from "react";
 import Heading from "../../common/heading/Heading";
 import "./Hero.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Hero = () => {
   const navigate = useNavigate();
-
-  const handleButtonClick = () => {
-    return navigate("/login");
-  };
 
   return (
     <>
@@ -24,12 +20,16 @@ const Hero = () => {
               Vokalia and Consonantia, there live the blind texts.
             </p>
             <div className="button">
-              <button className="primary-btn">
-                Register <i className="fa fa-long-arrow-alt-right"></i>
-              </button>
-              <button className="primary-btn" onClick={handleButtonClick}>
-                Login <i className="fa fa-long-arrow-alt-right"></i>
-              </button>
+              <Link to="/register">
+                <button className="primary-btn cursor-pointer">
+                  register <i className="fa fa-long-arrow-alt-right"></i>
+                </button>
+              </Link>
+              <Link to="/login">
+                <button className="primary-btn cursor-pointer">
+                  Login <i className="fa fa-long-arrow-alt-right"></i>
+                </button>
+              </Link>
             </div>
           </div>
         </div>

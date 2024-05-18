@@ -32,33 +32,42 @@ function App() {
   //footer/header
   return (
     <Router>
-      <Routes>
-        <Route element={<RegisterForm />} path="/register" />
-        <Route path="/evently" element={<Home />} />
-      </Routes>
       <AuthProvider>
+        <Routes>
+          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/" element={<Home />} />
+          <Route element={<Login />} path="/login" />
+        </Routes>
+
         <CustomDrawer>
           <Routes>
-            <Route path={"admin"} element={<PrivateRoutes role="Admin" />}>
-              <Route path={"users"} element={<Users />} />
-              <Route path={"dashboard-admin"} element={<AdminDash />} />
-              <Route path={"pending-Account"} element={<PendingAccounts />} />
-              <Route path={"pending-Events"} element={<PendingEvents />} />
+            {/* ***********! ADMIN DASHBOARD ******************** */}
+
+            <Route path="admin" element={<PrivateRoutes role="Admin" />}>
+              <Route path="users" element={<Users />} />
+              <Route path="dashboard-admin" element={<AdminDash />} />
+              <Route path="pending-Account" element={<PendingAccounts />} />
+              <Route path="pending-Events" element={<PendingEvents />} />
             </Route>
-            <Route
-              path={"organizer"}
-              element={<PrivateRoutes role="Organizer" />}
-            >
-              <Route path={"events"} element={<Events />} />
-              <Route path={"categories"} element={<Categories />} />
+
+            {/* *********** ADMIN DASHBOARD ******************** */}
+            <Route path="organizer">
               <Route
-                path={"mycategories"}
+                path="events"
+                element={
+                  <PrivateRoutes role="Organizer">
+                    <Events />
+                  </PrivateRoutes>
+                }
+              />
+              <Route path="categories" element={<Categories />} />
+              <Route
+                path="mycategories"
                 element={<ListOrganizerCategories />}
               />
 
-              <Route path={"myticket"} element={<TicketPopup />} />
+              <Route path="myticket" element={<TicketPopup />} />
             </Route>
-            <Route element={<Login />} path="/login" />
           </Routes>
         </CustomDrawer>
       </AuthProvider>

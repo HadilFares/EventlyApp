@@ -1,0 +1,23 @@
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30vh;
+  flex-direction: row;
+  gap: 10px;
+  max-width: 85%;
+  margin: auto;
+}
+
+.input-Search {
+  width: 50%; /* Full width */
+  padding: 0.1rem 0.75rem; /* Padding for better readability */
+  border: 2px solid #1eb2a6; /* Border styling */
+  border-radius: 0.25rem; /* Rounded corners */
+  font: 1.25rem / 1.5 sans-serif; /* Font styling */
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+  margin-bottom: -20px; /* Space between inputs */
+}
+input.input-Search:focus {
+  border: 2px solid #1eb2a6;
+}

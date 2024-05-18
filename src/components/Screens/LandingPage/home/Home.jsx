@@ -7,6 +7,7 @@ import Hprice from "./Hprice";
 import Testimonal from "./testimonal/Testimonal";
 import Header from "../common/header/Header";
 import Footer from "../common/footer/Footer";
+import Search from "../Search/Search";
 
 const Home = () => {
   return (
@@ -15,6 +16,7 @@ const Home = () => {
       <Hero />
       <AboutCard />
       <HAbout />
+      <Search />
       <Hblog />
       <Testimonal />
       <Footer />

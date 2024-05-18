@@ -7,6 +7,7 @@ import axios from "axios";
 import { variables } from "../../../variables";
 import dayjs from "dayjs";
 import "react-time-picker/dist/TimePicker.css";
+import { FormControl, OutlinedInput } from "@mui/material";
 export default function EventsForm(props) {
   const [DefaultDate, setDefaultDate] = useState("");
   const Types = [
@@ -28,6 +29,7 @@ export default function EventsForm(props) {
     Price: "",
     NbStand: "",
     CategoryName: "",
+    Photo: "",
   };
   const { addOrEdit, recordForEdit, Categories } = props;
 
@@ -178,6 +180,17 @@ export default function EventsForm(props) {
             error={errors.EndTime}
             required
           ></controls.Input>
+
+          <FormControl>
+            <div>Image</div>
+            <OutlinedInput
+              type="file"
+              name="Photo"
+              onChange={handleInputChange}
+              className="tight-spacing-input"
+            />
+          </FormControl>
+
           <div>
             <controls.Button type="submit" text="Submit" />
             <controls.Button text="Reset" color="error" onClick={resetForm} />

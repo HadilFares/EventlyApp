@@ -100,32 +100,37 @@ export default function CustomDrawer({ children }) {
   );
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       {user?.ISAuthenticated && (
-        <>
-          <Drawer variant="permanent" open={open}>
-            {DrawerList}
-          </Drawer>
-        </>
+        <ThemeProvider theme={defaultTheme}>
+          <>
+            {user?.ISAuthenticated && (
+              <Drawer variant="permanent" open={open}>
+                {DrawerList}
+              </Drawer>
+            )}
+          </>
+
+          <Box
+            component="main"
+            sx={{
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? theme.palette.grey[100]
+                  : theme.palette.grey[900],
+              flexGrow: 1,
+              height: "100vh",
+              overflow: "auto",
+            }}
+          >
+            <Toolbar />
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              {children}
+              <Copyright sx={{ pt: 4 }} />
+            </Container>
+          </Box>
+        </ThemeProvider>
       )}
-      <Box
-        component="main"
-        sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light"
-              ? theme.palette.grey[100]
-              : theme.palette.grey[900],
-          flexGrow: 1,
-          height: "100vh",
-          overflow: "auto",
-        }}
-      >
-        <Toolbar />
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          {children}
-          <Copyright sx={{ pt: 4 }} />
-        </Container>
-      </Box>
-    </ThemeProvider>
+    </>
   );
 }

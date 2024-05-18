@@ -18,13 +18,12 @@ import Notification from "../../Controls/Notification";
 import { AuthProvider, useAuth } from "../../../context/AuthContext";
 export default function Login() {
   const [showPassword, setShowPassword] = React.useState(false);
-
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
   const {
     register,
     handleSubmit,
@@ -68,6 +67,11 @@ export default function Login() {
       console.error("Error signing up", error.message);
     }
   };
+
+  useEffect(() => {
+    if (user && user.Roles.includes("Organizer")) navigate("/organizer/events");
+    if (user && user.Roles.includes("Admin")) navigate("/admin/users");
+  });
   return (
     <div className="App">
       <section>

@@ -33,6 +33,19 @@ export function useForm(initialFValues, validateOnChange = false, validate) {
         });
         if (validateOnChange) validate({ [name]: newValue });
       }
+    } else if (name === "Photo") {
+      // Check if the input is a file
+      if (e.target.files && e.target.files[0]) {
+        // Extract the file name
+        const newValue = e.target.files[0];
+        console.log("filename", newValue);
+        // Update the state with the file name
+        setValues({
+          ...values,
+          [name]: newValue,
+        });
+        if (validateOnChange) validate({ [name]: newValue });
+      }
     } else {
       // For other input fields, update the state directly without validation
       const newValue = value || "";

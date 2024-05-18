@@ -1,6 +1,5 @@
 import React from "react";
 import "../blog/blog.css";
-import { blog } from "../../../../dummydata";
 import Heading from "../common/heading/Heading";
 import axios from "axios";
 import { variables } from "../../../../variables";
@@ -64,11 +63,25 @@ const Hblog = () => {
           <Heading subtitle="OUR Events" title="Recent Events" />
           <div className="grid2">
             {displayedEvents.slice(0, 3).map((val) => (
-              <div className="items shadow">
-                <div className="img">
-                  <img src={`/images/Affiche/${val.photo}`} alt="" />
+              <div
+                className="items shadow"
+                style={{ display: "flex", flexDirection: "column" }}
+              >
+                <div className="img" style={{ height: "300px" }}>
+                  <img
+                    src={`/images/Affiche/${val.photo}`}
+                    style={{ objectFit: "cover" }}
+                    alt=""
+                  />
                 </div>
-                <div className="text">
+                <div
+                  className="text"
+                  style={{
+                    display: "flex",
+                    flex: 1,
+                    flexDirection: "column",
+                  }}
+                >
                   <div className="admin flexSB">
                     <span>
                       <i className="fa fa-user"></i>
@@ -85,7 +98,7 @@ const Hblog = () => {
                   </div>
                   <h1>{val.name}</h1>
                   <p>{val.description}</p>
-                  <div className="price">
+                  <div className="price" style={{ marginTop: "auto" }}>
                     <h3>
                       {" Price    "}
                       <i class="fas fa-dollar-sign"></i>

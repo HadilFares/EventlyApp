@@ -8,12 +8,6 @@ const HAbout = () => {
   return (
     <>
       <section className="homeAbout">
-        <div className="container">
-          <Heading
-            subtitle="our courses"
-            title="explore our popular online courses"
-          />
-        </div>
         <Categories />
       </section>
     </>
