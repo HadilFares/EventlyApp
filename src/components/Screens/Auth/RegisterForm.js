@@ -53,7 +53,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <section className="App">
+    <section className="log">
       <div className="register">
         <div className="col-1">
           <h2>Sign In</h2>
@@ -97,7 +97,7 @@ export default function RegisterForm() {
               placeholder="password"
             />
             {errors.Password?.type === "required" && "Password is required"}
-            <legend>Please select your preferred contact method:</legend>
+            <legend>Please select your preferred role:</legend>
             <div className="flex">
               <label>
                 <input

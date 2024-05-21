@@ -8,6 +8,7 @@ const Hero = () => {
 
   return (
     <>
+      <div className="hero-bg"></div>
       <section className="hero">
         <div className="container">
           <div className="row">

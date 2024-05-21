@@ -1,3 +1,9 @@
+.log {
+  display: flex;
+  justify-content: center; /* Horizontal centering */
+  align-items: center; /* Vertical centering */
+  height: 100vh; /* Full viewport height */
+}
 .register {
   max-width: 978px;
   width: 100vw;
@@ -29,7 +35,7 @@
 }
 
 #form > .btn {
-  background-color: #6a04d1;
+  background-color: #1eb2a6;
   color: #e9ecef;
   font-size: 1em;
   cursor: pointer;

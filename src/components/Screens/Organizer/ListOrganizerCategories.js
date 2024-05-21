@@ -258,7 +258,7 @@ export default function ListOrganizerCategories() {
     setFilteredCategories(filtered);
   }, [categories, searchQuery]);
   return (
-    <>
+    <div style={{ marginLeft: 40 }}>
       <h2>MyCategories</h2>
       <Search>
         <SearchIconWrapper>
@@ -316,6 +316,6 @@ export default function ListOrganizerCategories() {
           </Box>
         </Modal>
       )}
-    </>
+    </div>
   );
 }

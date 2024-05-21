@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Ticket.css";
 import axios from "axios";
 import { variables } from "../../../variables";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import PaidIcon from "@mui/icons-material/Paid";
@@ -12,6 +12,8 @@ import Form from "./Form.css";
 import { Box } from "@mui/material";
 import TicketForm from "./TicketForm";
 import Popup from "../../Controls/PopUp";
+import ConfirmDialog from "../../Controls/ConfirmDialog";
+import Notification from "../../Controls/Notification";
 const style = {
   position: "absolute",
   top: "5%",
@@ -31,6 +33,18 @@ const TicketPopup = () => {
   const [ticketInfo, setTicketInfo] = useState(location.state?.ticketInfo);
   const handleOpenPopUp = () => setOpenPopup(true);
   const handleClosePopUp = () => setOpenPopup(false);
+  const [notify, setNotify] = useState({
+    isOpen: false,
+    message: "",
+    type: "",
+  });
+  let navigate = useNavigate();
+
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: "",
+    subTitle: "",
+  });
   //const ticketInfo =;
   console.log("TicketInfoPop", ticketInfo);
   const startDate = new Date(ticketInfo.StartDate);
@@ -79,6 +93,34 @@ const TicketPopup = () => {
   const StartTime = convertTo12HourFormat(ticketInfo.StartTime);
   const EndTime = convertTo12HourFormat(ticketInfo.EndTime);
 
+  const DeleteTicket = async (id) => {
+    console.log("getticketedit", id);
+    try {
+      const result = await axios.delete(
+        variables.API_URL + `Ticket/${id}`,
+        config
+      );
+      setNotify({
+        isOpen: true,
+        message: "Deleted Successfully",
+        type: "success",
+      });
+      navigate("/organizer/events");
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.status >= 400 &&
+        error.response.status <= 500
+      ) {
+        setNotify({
+          isOpen: true,
+          message: error.response.data.message,
+          type: "error",
+        });
+      }
+    }
+  };
+
   const GetTicket = async (id) => {
     console.log("getticketedit", id);
     try {
@@ -110,7 +152,34 @@ const TicketPopup = () => {
           text="Edit Ticket"
           onClick={handleOpenPopUp}
         ></controls.Button>
+        <controls.Button
+          text="Delete Ticket"
+          color="secondary"
+          onClick={() => {
+            setConfirmDialog({
+              isOpen: true,
+              title: "Are you sure to delete this Ticket?",
+              subTitle: "You can't undo this operation",
+              onConfirm: () => {
+                DeleteTicket(ticketInfo.Id);
+                setConfirmDialog({
+                  isOpen: false,
+                });
+              },
+            });
+          }}
+        ></controls.Button>
       </Box>
+      <Notification
+        notify={notify}
+        setNotify={setNotify}
+        vertical="top"
+        horizontal="right"
+      />
+      <ConfirmDialog
+        confirmDialog={confirmDialog}
+        setConfirmDialog={setConfirmDialog}
+      />
       {ticketInfo && (
         <Popup
           title={"Ticket Form"}

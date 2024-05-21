@@ -12,10 +12,18 @@ export default function NavBar() {
   // let navigate = useNavigate();
 
   return (
-    <AppBar>
+    <AppBar
+      position="fixed" // Use 'fixed' or 'sticky' depending on your needs
+      sx={{
+        left: "-30px", // Adjust this value to move the AppBar to the right
+        width: "calc(101% - 0px)", // Adjust the width accordingly to prevent overflow
+      }}
+    >
       <Toolbar
         sx={{
           pr: "24px", // keep right padding when drawer closed
+          display: "flex", // Ensure the toolbar uses flexbox
+          justifyContent: "space-between", // keep right padding when drawer closed
         }}
       >
         <Typography
@@ -23,7 +31,7 @@ export default function NavBar() {
           variant="h6"
           color="inherit"
           noWrap
-          sx={{ flexGrow: 1 }}
+          sx={{ flexFlow: 1 }}
         >
           Dashboard
         </Typography>

@@ -32,9 +32,9 @@ export default function TicketForm(props) {
   console.log("#StartDate", TicketInfo?.StartDate);
   const EndDate = new Date(TicketInfo?.EndDate);
   const StartDate = new Date(TicketInfo?.StartDate);
-  const formattedStartDate = StartDate.toISOString().slice(0, 10);
+  //const formattedStartDate = StartDate.toISOString().slice(0, 10);
   // Format the date to "YYYY-MM-DD"
-  const formattedEndDate = EndDate.toISOString().slice(0, 10);
+  //const formattedEndDate = EndDate.toISOString().slice(0, 10);
   const {
     register,
     handleSubmit,
@@ -54,8 +54,8 @@ export default function TicketForm(props) {
           }
         : {
             Name: TicketInfo?.Name,
-            StartDate: formattedStartDate,
-            EndDate: formattedEndDate,
+            StartDate: TicketInfo?.StartDate,
+            EndDate: TicketInfo?.EndDate,
             StartTime: TicketInfo?.StartTime,
             EndTime: TicketInfo?.EndTime,
             Location: TicketInfo?.Location,
@@ -131,8 +131,8 @@ export default function TicketForm(props) {
           Id: TicketInfo.Id,
           EventId: TicketInfo.EventId,
           Name: ticketInfo.Name,
-          StartDate: new Date(ticketInfo.StartDate + "T20:00:00"),
-          EndDate: new Date(ticketInfo.EndDate + "T20:00:00"),
+          StartDate: ticketInfo.StartDate,
+          EndDate: ticketInfo.EndDate,
           StartTime: ticketInfo.StartTime,
           EndTime: ticketInfo.EndTime,
           Location: ticketInfo.Location,
@@ -143,6 +143,7 @@ export default function TicketForm(props) {
       );
       setOpenPopup(false);
       onEditSuccess(ticketInfo);
+      reset();
     } catch (error) {
       console.log(error);
     }
@@ -158,10 +159,14 @@ export default function TicketForm(props) {
         {
           EventId: addTicket.Id,
           Name: TicketInfo.Name,
-          StartDate: formatDateForBackend(TicketInfo.StartDate),
+          /*StartDate: formatDateForBackend(TicketInfo.StartDate),
           EndDate: formatDateForBackend(TicketInfo.EndDate),
           StartTime: formatTimeForBackend(TicketInfo.StartTime),
-          EndTime: formatTimeForBackend(TicketInfo.EndTime),
+          EndTime: formatTimeForBackend(TicketInfo.EndTime),*/
+          StartDate: addTicket.StartDate,
+          EndDate: addTicket.EndDate,
+          StartTime: formatTimeForBackend(addTicket.StartTime),
+          EndTime: formatTimeForBackend(addTicket.EndTime),
           Location: TicketInfo.Location,
           Price: TicketInfo.Price,
           TicketColor: TicketInfo.TicketColor,
@@ -178,6 +183,7 @@ export default function TicketForm(props) {
         });
         setOpenPopup(false);
         setIsPopupOpen(false);
+        reset();
       }
     } catch (error) {
       //  setloading(false);
@@ -202,7 +208,7 @@ export default function TicketForm(props) {
           value={mode === "add" ? addTicket.Id : TicketInfo.Id}
         />
         {!isPopupOpen && (
-          <Grid container spacing={4}>
+          <Grid container spacing={0}>
             <Grid item xs={6}>
               <FormControl>
                 <div>Name</div>
@@ -230,24 +236,8 @@ export default function TicketForm(props) {
                 )}
               </FormControl>
               <br />
-              <FormControl>
-                <div>Price</div>
-                <OutlinedInput
-                  id="outlined-adornment-email"
-                  type="number"
-                  {...register("Price", { required: true })}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      {/* You can add any adornment here if needed */}
-                    </InputAdornment>
-                  }
-                  label="Price"
-                  className="tight-spacing-input"
-                />
-                {errors.Name?.type === "required" && (
-                  <FormHelperText error>Price</FormHelperText>
-                )}
-              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
               <FormControl>
                 <div>Location</div>
                 <OutlinedInput
@@ -266,90 +256,29 @@ export default function TicketForm(props) {
                   <FormHelperText error>Location</FormHelperText>
                 )}
               </FormControl>
-            </Grid>
-            <Grid item xs={6}>
               <FormControl>
-                <div>StartDate</div>
-                <OutlinedInput
-                  type="date"
-                  {...register("StartDate", { required: true })}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      {/* You can add any adornment here if needed */}
-                    </InputAdornment>
-                  }
-                  lable="StartDate"
-                  className="tight-spacing-input"
-                />
-                {errors.Name?.type === "required" && (
-                  <FormHelperText error>StartDate</FormHelperText>
-                )}
-              </FormControl>
-
-              <FormControl>
-                <div>EndDate</div>
-                <OutlinedInput
-                  type="date"
-                  {...register("EndDate", { required: true })}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      {/* You can add any adornment here if needed */}
-                    </InputAdornment>
-                  }
-                  label="EndDate"
-                  className="tight-spacing-input"
-                />
-                {errors.Name?.type === "required" && (
-                  <FormHelperText error>EndDate</FormHelperText>
-                )}
-              </FormControl>
-              <FormControl>
-                <div>StartTime</div>
+                <div>Price</div>
                 <OutlinedInput
                   id="outlined-adornment-email"
-                  type="time"
-                  {...register("StartTime", { required: true })}
+                  type="number"
+                  {...register("Price", { required: true })}
                   endAdornment={
                     <InputAdornment position="end">
                       {/* You can add any adornment here if needed */}
                     </InputAdornment>
                   }
-                  label="StartTime"
+                  label="Price"
                   className="tight-spacing-input"
                 />
                 {errors.Name?.type === "required" && (
-                  <FormHelperText error>StartTime</FormHelperText>
+                  <FormHelperText error>Price</FormHelperText>
                 )}
               </FormControl>
-              <FormControl>
-                <div>EndTime</div>
-                <OutlinedInput
-                  id="outlined-adornment-email"
-                  type="time"
-                  {...register("EndTime", { required: true })}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      {/* You can add any adornment here if needed */}
-                    </InputAdornment>
-                  }
-                  label="EndTime"
-                  className="tight-spacing-input"
-                />
-                {errors.Name?.type === "required" && (
-                  <FormHelperText error>EndTime</FormHelperText>
-                )}
-              </FormControl>
-
-              <div>
-                <controls.Button type="submit" text="Submit" />
-                <controls.Button
-                  text="Reset"
-                  color="error"
-                  onClick={resetForm}
-                />
-              </div>
             </Grid>
-            <Grid item xs={9}></Grid>
+            <div>
+              <controls.Button type="submit" text="Submit" />
+              <controls.Button text="Reset" color="error" onClick={resetForm} />
+            </div>
           </Grid>
         )}{" "}
       </form>

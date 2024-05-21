@@ -180,6 +180,11 @@ export default function Events() {
       });
     } catch (error) {
       console.log(error);
+      setNotify({
+        isOpen: true,
+        message: "You don't have ticket for this event ",
+        type: "error",
+      });
     }
   };
   const findCategories = async () => {
@@ -224,13 +229,6 @@ export default function Events() {
       }
     }
   };
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Get month (adding 1 since it's zero-based) and pad with leading zero if needed
-    const day = date.getDate().toString().padStart(2, "0"); // Get day and pad with leading zero if needed
-    const year = date.getFullYear(); // Get year
-    return `${month}/${day}/${year}`;
-  }
 
   const addOrEdit = async (EventInfo, resetForm) => {
     console.log("#Eventinfo", EventInfo);
@@ -445,8 +443,8 @@ export default function Events() {
           <CircularProgress />
         </Box>
       ) : (
-        <div className="outletForm">
-          <Content>
+        <div>
+          <>
             <TblContainer>
               <Table aria-label="collapsible table">
                 <TblHead />
@@ -499,7 +497,7 @@ export default function Events() {
                 }}
               />
             </div>
-          </Content>
+          </>
         </div>
       )}
     </>

@@ -1,4 +1,4 @@
-import { Grid, makeStyles } from "@material-ui/core";
+import { FormHelperText, Grid, makeStyles } from "@material-ui/core";
 import { React, useEffect, useState } from "react";
 import { useForm, Form } from "../../Communs/UseForm";
 import controls from "../../Controls/controls";
@@ -10,20 +10,26 @@ import "react-time-picker/dist/TimePicker.css";
 import { FormControl, OutlinedInput } from "@mui/material";
 export default function EventsForm(props) {
   const [DefaultDate, setDefaultDate] = useState("");
+  const [DefaultTime, setDefaultTime] = useState("");
+  const [DefaultStartTime, setDefaultStartTime] = useState("");
+
   const Types = [
     { label: "Foire", value: "Foire" },
     { label: "Salons", value: "Salons" },
     { label: "Expositions", value: "Expositions" },
   ];
 
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+
   const initialFValues = {
     Id: 0,
     Name: "",
     Description: "",
-    StartDate: "",
-    EndDate: "",
-    StartTime: "",
-    EndTime: "",
+    StartDate: formattedDate,
+    EndDate: formattedDate,
+    StartTime: "08:00:00",
+    EndTime: "17:00:00",
     Type: "",
     Location: "",
     Price: "",
@@ -33,14 +39,38 @@ export default function EventsForm(props) {
   };
   const { addOrEdit, recordForEdit, Categories } = props;
 
-  const validate = (fieldValues = values) => {
+  /* const validate = (fieldValues = values) => {
     let temp = { ...errors };
     setErrors({
       ...temp,
     });
 
-    if (fieldValues == values) return Object.values(temp).every((x) => x == "");
+    if (fieldValues == values)
+      if (!fieldValues.Photo) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          Photo: "An image is required.",
+        }));
+      }
+    return Object.values(temp).every((x) => x == "");
+  };*/
+  const validate = (fieldValues = values) => {
+    let temp = { ...errors };
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      if (!fieldValues.Photo) {
+        newErrors.Photo = "An image is required.";
+      } else {
+        // Explicitly clear the error for the Photo field
+        delete newErrors.Photo;
+      }
+      return newErrors;
+    });
+
+    // Return true if there are no errors
+    return Object.values(errors).length === 0;
   };
+
   const { values, setValues, errors, setErrors, handleInputChange, resetForm } =
     useForm(initialFValues, true, validate);
 
@@ -68,6 +98,8 @@ export default function EventsForm(props) {
     const today = new Date();
     const formattedDate = today.toISOString().split("T")[0];
     setDefaultDate(formattedDate);
+    setDefaultStartTime("08:00:00");
+    setDefaultTime("17:00:00");
   }, [recordForEdit]);
 
   return (
@@ -147,7 +179,7 @@ export default function EventsForm(props) {
             label="StartDate"
             name="StartDate"
             type="date"
-            value={values.StartDate || DefaultDate}
+            value={values.StartDate || values.DefaultDate}
             onChange={handleInputChange}
             error={errors.StartDate}
             required
@@ -156,7 +188,7 @@ export default function EventsForm(props) {
             label="EndDate"
             name="EndDate"
             type="date"
-            value={values.EndDate || DefaultDate}
+            value={values.EndDate || values.DefaultDate}
             onChange={handleInputChange}
             error={errors.EndDate}
             required
@@ -166,7 +198,7 @@ export default function EventsForm(props) {
             label="StartTime"
             type="time"
             name="StartTime"
-            value={values.StartTime}
+            value={values.StartTime || values.DefaultStartTime}
             onChange={handleInputChange}
             error={errors.StartTime}
             required
@@ -175,13 +207,12 @@ export default function EventsForm(props) {
             label="EndTime"
             name="EndTime"
             type="time"
-            value={values.EndTime}
+            value={values.EndTime || values.DefaultTime}
             onChange={handleInputChange}
             error={errors.EndTime}
             required
           ></controls.Input>
-
-          <FormControl>
+          <FormControl variant="outlined" error={!!errors.Photo}>
             <div>Image</div>
             <OutlinedInput
               type="file"
@@ -189,8 +220,9 @@ export default function EventsForm(props) {
               onChange={handleInputChange}
               className="tight-spacing-input"
             />
+            {errors.Photo && <FormHelperText>{errors.Photo}</FormHelperText>}{" "}
+            {/* Display error message */}
           </FormControl>
-
           <div>
             <controls.Button type="submit" text="Submit" />
             <controls.Button text="Reset" color="error" onClick={resetForm} />

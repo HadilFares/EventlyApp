@@ -25,6 +25,7 @@ import ListOrganizerCategories from "./components/Screens/Organizer/ListOrganize
 import TicketPopup from "./components/Screens/Organizer/TicketPopup";
 import Home from "./components/Screens/LandingPage/home/Home.jsx";
 import Footer from "./components/Screens/LandingPage/common/footer/Footer.jsx";
+import Notfound from "./components/Communs/Notfound.js";
 function App() {
   const methods = useForm(); // Initialize useForm here
   const { watch, errors } = methods;
@@ -34,6 +35,7 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
+          <Route path="*" element={<Notfound />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/" element={<Home />} />
           <Route element={<Login />} path="/login" />

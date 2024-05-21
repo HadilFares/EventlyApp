@@ -172,18 +172,20 @@ export default function Categories() {
     <Grid container spacing={2}>
       <Grid xs={8}>
         <Box display="flex" alignItems="center">
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              onChange={(e) => setSearchQuery(e.target.value)}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>
+          <div style={{ marginLeft: 60 }}>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                inputProps={{ "aria-label": "search" }}
+              />
+            </Search>
+          </div>
           <div>
-            <Box sx={{ marginLeft: 3 }}>
+            <Box sx={{ marginLeft: 7 }}>
               {" "}
               {/* Adjust the marginLeft value as needed */}
               <controls.Button
@@ -215,6 +217,7 @@ export default function Categories() {
             borderRadius: 2,
             border: "1px solid",
             borderColor: "divider",
+            marginLeft: 7,
           }}
         >
           <FixedSizeList

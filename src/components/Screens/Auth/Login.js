@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import RegisterPic from "../../../assets/Register.jpg";
 import { useForm } from "react-hook-form";
-import { Navigate, useNavigate, Redirect } from "react-router-dom";
+import { Navigate, useNavigate, Redirect, Link } from "react-router-dom";
 import { variables } from "../../../variables";
 import "../.././../App.css";
 import "../../../css/register.css";
@@ -73,7 +73,7 @@ export default function Login() {
     if (user && user.Roles.includes("Admin")) navigate("/admin/users");
   });
   return (
-    <div className="App">
+    <div className="log">
       <section>
         <div className="register">
           <div className="col-1">
@@ -140,6 +140,7 @@ export default function Login() {
               <button className="btn" type="submit">
                 Login
               </button>
+              <Link to="/register">Create an account </Link>
             </form>
           </div>
           <div className="col-2">

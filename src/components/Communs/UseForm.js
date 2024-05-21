@@ -40,6 +40,7 @@ export function useForm(initialFValues, validateOnChange = false, validate) {
         const newValue = e.target.files[0];
         console.log("filename", newValue);
         // Update the state with the file name
+
         setValues({
           ...values,
           [name]: newValue,
@@ -48,6 +49,7 @@ export function useForm(initialFValues, validateOnChange = false, validate) {
       }
     } else {
       // For other input fields, update the state directly without validation
+
       const newValue = value || "";
       setValues({
         ...values,
